@@ -30,7 +30,7 @@ function $(str){
 }
 
 function $$(str){
-    if (str instanceof NodeList || str instanceof Array || typeof(str) === 'array') return $A(str);
+    if (str instanceof NodeList || str instanceof Array) return $A(str);
     return $A(document.querySelectorAll(str));
 }
 

@@ -19,6 +19,7 @@ html, body {
     position: absolute;
     top: 0; right: 0;
     color: white;
+    display: none;
 }
 
 #ControlsWrapper {
@@ -35,10 +36,6 @@ html, body {
     display: block;
     color: white;
     text-decoration: none;
-}
-
-#FileControls {
-    display: none;
 }
 
 #Controls label {

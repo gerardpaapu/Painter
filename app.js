@@ -12,3 +12,18 @@ ipaint.painter = (function (){
     return painter;
 }());
 
+ipaint.upload = function (data){
+    try {
+        sendPost({
+            'url': "http://gerardpaapu.com/upload",
+            'data': {'data': data},
+            'onSuccess': function (){
+                alert("uploaded to: " + this.responseText);
+            },
+
+            'onFail': $alert("Image Upload Failed")
+        });
+    } catch (err) {
+        log(err);
+    }
+};
