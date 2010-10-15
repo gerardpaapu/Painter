@@ -71,8 +71,9 @@ function sendPost(options){
     req.onreadystatechange = callback;
     req.open("POST", options.url, false);
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.setRequestHeader("Content-length", parameters.length);
-    req.setRequestHeader("Connection", "close");
+    // // Apparently I shouldn't set these headers?
+    // req.setRequestHeader("Content-length", parameters.length);
+    // req.setRequestHeader("Connection", "close");
     req.send(parameters);
 
     function callback(){
