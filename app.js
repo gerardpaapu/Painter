@@ -13,17 +13,21 @@ ipaint.painter = (function (){
 }());
 
 ipaint.upload = function (data){
-    try {
-        sendPost({
-            'url': "http://gerardpaapu.com/upload",
-            'data': {'data': data},
-            'onSuccess': function (){
-                alert("uploaded to: " + this.responseText);
-            },
+    var dataURI = ipaint.painter.layers.getMergedData();
+    var data = /,(.*)$/.exec(dataURI);
+    if (data) {
+        try {
+            sendPost({
+                'url': "http://gerardpaapu.com/upload",
+                'data': {'data': data},
+                'onSuccess': function (){
+                    alert("uploaded to: " + this.responseText);
+                },
 
-            'onFail': function (){ alert("Image Upload Failed") }
-        });
-    } catch (err) {
-        console.log(err);
+                'onFail': function (){ alert("Image Upload Failed") }
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 };

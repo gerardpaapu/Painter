@@ -26,9 +26,7 @@
         upload: (function (){
             var el = $("#Upload");
             var fn = function (event){
-                var dataURI = ipaint.painter.layers.getMergedData();
-                var data = /,(.*)$/.exec(dataURI);
-                if (data) ipaint.upload(data);
+                ipaint.upload();
             };
 
             el.addEventListener('click', fn);
