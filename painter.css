@@ -1,0 +1,9 @@
+.layerContainer {
+    position: relative;
+    overflow: hidden;
+}
+
+.layerContainer canvas {
+    position: absolute;
+    top: 0; left: 0;
+}

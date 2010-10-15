@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <title>Painter</title>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="painter.css" />
+    </head>
+    <body>
+        <div id="MainWrapper">
+            <div id="ControlsWrapper">
+                <a href="#show/hide" id="ControlsShowHide">show</a>
+                <div id="Controls">
+                    <div id="BrushOptions">
+                        <label>Brush:</label>
+                        <select id="BrushSize" name="BrushSize">
+                            <option value="2">2px</option>
+                            <option value="6">6px</option>
+                            <option value="10">10px</option>
+                            <option value="20" selected>20px</option>
+                            <option value="40">40px</option>
+                            <option value="80">80px</option>
+                        </select>
+                        
+                        <select name="Opacity" id="Opacity">
+                            <option value="0.01">lighter</option>
+                            <option value="0.02">light</option>
+                            <option value="0.05">medium</option>
+                            <option value="0.08">dark</option>
+                            <option value="0.2" selected>darker</option>
+                            <option value="1">100%</option>
+                        </select>
+        
+                        <select id="Mode" name="Mode">
+                            <option value="paint" selected>paint</option>
+                            <option value="erase">erase</option>
+                            <option value="behind">behind</option>
+                            <option value="inside">inside</option>
+                            <option value="lighten">lighten</option>
+                            <option value="darken">darken</option>
+                        </select>
+                    </div>
+    
+                    <div id="FileControls">
+                        <input type="button" id="New" value="New" />
+                        <input type="button" id="Save" value="Save" />
+                        <input type="button" id="Delete" value="Delete" />
+                        <input type="button" id="Upload" value="Upload" />
+                        <div>
+                            <select id="Load">
+                                <option value="" selected>Load</option>
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div id="ColorPicker">
+                        <div class="canvasWrapper">
+                            <canvas class="pickRed" width="30" height="255"></canvas>
+                            <canvas class="pickGreenBlue" width="255" height="255"></canvas>
+                        </div>
+                        <input type="color" id="RGBValue" value="#000000">
+                        <div class="sample">sample</div>
+                        <a href="#save" class="saveToPalette button">save</a>
+                        <ul class="palette">
+                            <li>1</li> <li>2</li> <li>3</li> <li>4</li> <li>5</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="Debug">
+                <h3>Debug</h3>
+            </div>
+        </div>
+        <script type="text/javascript" src="lib.js"></script>
+        <script type="text/javascript" src="colorpicker.js"></script>
+        <script type="text/javascript" src="painter.js"></script>
+        <script type="text/javascript" src="app.js"></script>
+        <script type="text/javascript" src="ui.js"></script>
+    </body>
+</html>
