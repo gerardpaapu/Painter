@@ -13,8 +13,9 @@ ipaint.painter = (function (){
 }());
 
 ipaint.upload = function (data){
-    var dataURI = ipaint.painter.layers.getMergedData();
-    var data = /,(.*)$/.exec(dataURI);
+    var data = ipaint.painter.layers.getMergedData();
+    data = /,(.*)$/.exec(dataURI);
+    data = data && data[1];
     if (data) {
         try {
             sendPost({
