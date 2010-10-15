@@ -14,7 +14,7 @@ ipaint.painter = (function (){
 
 ipaint.upload = function (data){
     var data = ipaint.painter.layers.getMergedData();
-    data = /,(.*)$/.exec(dataURI);
+    data = /,(.*)$/.exec(data);
     data = data && data[1];
     if (data) {
         try {
