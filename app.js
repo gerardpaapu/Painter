@@ -21,7 +21,7 @@ ipaint.upload = function (data){
                 alert("uploaded to: " + this.responseText);
             },
 
-            'onFail': $alert("Image Upload Failed")
+            'onFail': function (){ alert("Image Upload Failed") }
         });
     } catch (err) {
         console.log(err);
