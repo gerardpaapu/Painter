@@ -104,9 +104,10 @@ function getOrientation(){
 }
 
 function getPoint(event, element){
+    var offset = getClientPosition(element);
+
     if (event.targetTouches){
-        var touch = event.targetTouches[0],
-            offset = getClientPosition(element);
+        var touch = event.targetTouches[0];
 
         return {
             x: touch.pageX - offset.x,
@@ -114,8 +115,8 @@ function getPoint(event, element){
         };
     } else {
         return {
-            x: event.clientX - element.clientLeft,
-            y: event.clientY - element.clientTop
+            x: event.clientX - offset.x,
+            y: event.clientY - offset.y
         };
     }
 }
@@ -186,3 +187,13 @@ function clone(obj){
     f.prototype = obj;
     return new f;
 }
+
+$.globals = {};
+$.globals.isTouchDevice = (function (){
+    try {
+        document.createEvent("TouchEvent");
+        return true;
+    } catch (err){
+        return false;
+    }
+}());

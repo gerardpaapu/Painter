@@ -8,6 +8,7 @@
     var step = 10, r =  g =  b = 0;
     var palette = ["#FFFFFF", "#000000", "#FF0000", "#00FF00", "#0000FF"];
     var paletteElements = c.querySelectorAll(".palette li");
+    var globals = $.globals;
 
     drawRed();
     drawGB();
@@ -15,17 +16,39 @@
 
     setColor(rgbToHex(r, g, b));
 
-    pickRed.addEventListener("touchmove", pickRedAtPoint, false);
-    pickRed.addEventListener("click", pickRedAtPoint, false);
-    pickColor.addEventListener("touchmove", pickColorAtPoint, false);
-    pickColor.addEventListener("click", pickColorAtPoint, false);
+    if (globals.isTouchDevice){
+        pickRed.addEventListener("touchmove", function (event){
+            var point = getPoint(event, this);
+            pickRedAtPoint(point);
+        }, false);
 
-    pickColor.addEventListener("mouseup", function (event){
-        fireChange();
-    }, false);
-    pickColor.addEventListener("touchend", function (event){
-        fireChange();
-    }, false);
+        pickColor.addEventListener("touchmove", function (event){
+            var point = getPoint(event, this);
+            pickColorAtPoint(point);
+        }, false);
+
+        pickColor.addEventListener("touchend", fireChange, false);
+    } else {
+        pickRed.addEventListener("mousemove", function (event){
+            if (globals.mousedown){
+                event.preventDefault();
+                var point = getPoint(event, this);
+                pickRedAtPoint(point);
+            }
+            event.stopPropagation();
+        }, false);
+
+        pickColor.addEventListener("mousemove", function (event){
+            if (globals.mousedown){
+                event.preventDefault();
+                var point = getPoint(event, this);
+                pickColorAtPoint(point);
+            }
+            event.stopPropagation();
+        }, false);
+
+        pickColor.addEventListener("mouseup", fireChange, false);
+    }
 
     saveToPaletteLink.addEventListener('click', function (event){
         var hexColor = rgbToHex(r, g, b);
@@ -45,7 +68,7 @@
 
     function drawRed(){
         var ctx = pickRed.getContext('2d'),
-            width = pickRed.getAttribute('width'); 
+        width = pickRed.getAttribute('width'); 
 
         for (var y = 0; y < 256; y += step){
             ctx.fillStyle = 'rgb('+y+', 0, 0)';
@@ -73,37 +96,21 @@
         rgbValue.dispatchEvent(change);
     }
 
-    function pickColorAtPoint(event){
-        try {
-            var point = getPoint(event, this);
-            g = Math.floor(limit(point.x, 0, 255));
-            b = Math.floor(limit(point.y, 0, 255));
-            setColor(rgbToHex(r, g, b));
-
-            event.preventDefault();
-            return false;
-        } catch (err) {
-            log(err);
-        }
+    function pickColorAtPoint(point){
+        g = ~~(limit(point.x, 0, 255));
+        b = ~~(limit(point.y, 0, 255));
+        setColor(rgbToHex(r, g, b));
     }
 
-   function pickRedAtPoint(event){
-        try {
-            r = getPoint(event, this).y;
-            r = Math.floor(limit(r, 0, 255));
-            drawGB();
-
-            event.preventDefault();
-            return false;
-        } catch (err) {
-            log(err);
-        }
+    function pickRedAtPoint(point){
+        r = point.y;
+        r = Math.floor(limit(r, 0, 255));
+        drawGB();
     } 
 
     function pushToPalette(color){
         palette.unshift(color);
         palette.pop();
-    
         renderPalette();
     }
 
@@ -119,8 +126,8 @@
     }
 
     function rgbToHex(r, g, b){
-         var s = (r * 65536 + g * 256 + b).toString(16);
-         return '#' + pad(s, 6).toUpperCase();
+        var s = (r * 65536 + g * 256 + b).toString(16);
+        return '#' + pad(s, 6).toUpperCase();
 
         function pad(s, l){
             if (s.length < l){

@@ -210,8 +210,7 @@ Layer.prototype = {
         var ctx = this.context;
         ctx.lineWidth = brush.size;
         ctx.lineCap = ctx.lineJoin = brush.style;
-        ctx.strokeStyle = brush.color;
-        ctx.globalAlpha = brush.opacity
+        ctx.strokeStyle = brush.getRGBA();
         ctx.globalCompositeOperation = brush.getCompositeOperation();
     },
 
@@ -229,10 +228,15 @@ function Brush(data){
 }
 
 Brush.prototype = {
-    'color': "#000000",
+    'color': [0, 0, 0],
     'opacity': 1,
     'style': "round",
     'size': 10,
+
+    'getRGBA': function (){
+        var components = this.color.concat([this.opacity]); 
+        return "rgba("+components.join(", ")+")"
+    },
 
     'setSize': function (size){
         this.size = Math.max(parseInt(size, 10), 1); 
@@ -244,8 +248,26 @@ Brush.prototype = {
         this.opacity = Math.max(opacity, 0);
     },
 
-    'setColor': function(color){
-        this.color = color;
+    'setColorRGB': function (r, g, b){
+        this.color = [clean(r), clean(g), clean(b)];
+
+        function clean (n){
+            // ensure that n is an integer (0 - 255)
+            n = parseInt(n, 10);
+            n = Math.max(n, 0);
+            n = Math.min(n, 255);
+            return n;
+        }
+    },
+
+    'setColorHex': function (str){
+       var match = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(str);
+       return !match ? this.setColorRGB(0, 0, 0)
+           :  this.setColorRGB(
+               parseInt(match[1], 16), 
+               parseInt(match[2], 16),
+               parseInt(match[3], 16)
+           );
     },
 
     'setMode': function (mode){
@@ -257,7 +279,8 @@ Brush.prototype = {
     },
 
     'load': function (data){
-        if (data.color)   this.setColor(data.color);
+        if (data.rgb)     this.setColorRGB.apply(this, data.rgb);
+        if (data.hex)     this.setColorHex(data.hex);
         if (data.opacity) this.setOpacity(data.opacity);
         if (data.size)    this.setSize(data.size);
         if (data.style)   this.setStyle(data.style);

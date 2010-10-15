@@ -2,6 +2,8 @@
     var wrapper = $('#ControlsWrapper'),
         controls = $('#Controls'),
         showHide = $('#ControlsShowHide'),
+        g = $.globals,
+        painter = ipaint.painter,
         controlsVisible = true;
 
     hideControls();
@@ -48,10 +50,52 @@
         this.painter.updateBrush(opt);
     };
 
-    painter.ui = {
-        colorpicker: new BrushControl("#ColorPicker input[type=color]", 'color'),
+    var ui = ipaint.ui = {
+        colorpicker: new BrushControl("#ColorPicker input[type=color]", 'hex'),
         opacity: new BrushControl("#Opacity", 'opacity'),
         mode: new BrushControl("#Mode", 'mode'),
-        size: new BrushControl("#BrushSize", 'size')
+        size: new BrushControl("#BrushSize", 'size'),
+        painter: painter.element,
     };
+
+    $("#ControlsWrapper").addEventListener('mousedown', stopEvent, false);
+    $("#ControlsWrapper").addEventListener('mousemove', stopEvent, false);
+
+    function stopEvent(event){
+        event.stopPropagation();
+        return false;
+    }
+
+    if (g.isTouchDevice){    
+        ui.painter.addEventListener('touchstart', function (event){
+            var point = getPoint(event, this);
+
+            painter.beginPath();
+            painter.moveTo(point.x, point.y);
+        });
+
+        ui.painter.addEventListener('touchmove', function (event){
+            var point = getPoint(event, this);
+
+            painter.lineTo(point.x, point.y);
+        });
+    } else {
+        g.mousedown = false;
+        window.addEventListener('mousedown', function (){ g.mousedown = true; }, true);
+        window.addEventListener('mouseup', function (){ g.mousedown = false; }, true);
+
+        (ui.painter).addEventListener('mousedown', function (event){
+            var point = getPoint(event, this);
+            painter.beginPath();
+            painter.moveTo(point.x, point.y);    
+        }, false);
+
+        (ui.painter).addEventListener('mousemove', function (event){
+           if (g.mousedown){
+                var point = getPoint(event, this);
+                painter.lineTo(point.x, point.y);
+                event.preventDefault();
+           } 
+        }, false);
+    } 
 }());
