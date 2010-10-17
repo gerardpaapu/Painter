@@ -2,6 +2,8 @@ var ipaint = {
     g: {} // a place for random globals
 };
 
+$.lockLayout();
+
 ipaint.painter = (function (){
     var container = $('#MainWrapper'),
         size = Math.max(container.clientWidth, container.clientHeight),
@@ -19,7 +21,7 @@ ipaint.upload = function (data){
     if (data) {
         try {
             sendPost({
-                'url': "http://gerardpaapu.com/upload",
+                'url': "http://localhost:8675",
                 'data': {'data': data},
                 'onSuccess': function (){
                     alert("uploaded to: " + this.responseText);
@@ -28,7 +30,7 @@ ipaint.upload = function (data){
                 'onFail': function (){ alert("Image Upload Failed") }
             });
         } catch (err) {
-            console.log(err);
+            $.log(err);
         }
     }
 };
