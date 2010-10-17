@@ -12,10 +12,12 @@ ipaint.painter = (function (){
     return painter;
 }());
 
-ipaint.upload = function (data){
-    var data = ipaint.painter.layers.getMergedData();
+ipaint.upload = function (){
+    var data;
+    data = ipaint.painter.layers.getMergedData();
     data = /,(.*)$/.exec(data);
     data = data && data[1];
+
     if (data) {
         try {
             sendPost({
@@ -25,10 +27,12 @@ ipaint.upload = function (data){
                     alert("uploaded to: " + this.responseText);
                 },
 
-                'onFail': function (){ alert("Image Upload Failed") }
+                'onFail': function (){
+                    alert("Image Upload Failed");
+                }
             });
         } catch (err) {
-            console.log(err);
+            $.log(err);
         }
     }
 };
