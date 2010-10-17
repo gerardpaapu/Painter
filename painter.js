@@ -13,7 +13,7 @@ Painter.prototype = {
     'createElement': function (){
         if (this.element) return false;
 
-        this.element = $element("div", {
+        this.element = $.element("div", {
             'class': "painterView",
             'style': "width: " + this.width + "px; " +
                      "height: " + this.height + "px;" 
@@ -82,7 +82,7 @@ function LayerCollection(width, height){
 LayerCollection.prototype = {
     'createElement': function (){
         if (!this.element){
-            this.element = $element('div', {
+            this.element = $.element('div', {
                 'class': "layerContainer",
                 'style': "width: " + this.width + "px; " +
                          "height: " + this.height + "px;"
@@ -135,7 +135,7 @@ LayerCollection.prototype = {
     },
 
     'getMergedData': function (){
-        var canvas = $element("canvas", {'width': this.width, 'height': this.height});
+        var canvas = $.element("canvas", {'width': this.width, 'height': this.height});
         var ctx = canvas.getContext("2d");
 
         this.items.forEach(function (layer){
@@ -175,7 +175,7 @@ LayerCollection.fromJSON = function (str){
 // Layer {{{
 function Layer(name, width, height){
     this.name = name;
-    this.canvas = $element("canvas", {
+    this.canvas = $.element("canvas", {
         'width': width,
         'height': height,
         'data-name': name

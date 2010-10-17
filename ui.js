@@ -1,5 +1,40 @@
 (function (){
     var g = $.globals, painter = ipaint.painter;
+
+    function UIComponent(element, callback){
+        this.element = $(element);
+        this.callback = callback;
+        this.listen();
+        this.update();
+    }
+
+    UIComponent.prototype = {
+        update: function (){
+            var value = this.getValue();
+            return this.callback(value);
+        },
+
+        getValue: function (){
+            var node = this.element;
+
+            if (node.localName === 'input'){
+                return node.getAttribute('value');
+            } else if (node.localName === 'select'){
+                return node.options[node.selectedIndex].getAttribute('value');
+            } else {
+                return null;
+            }
+        },
+
+        listen: function (){
+            var o = this;
+            this.element.addEventListener('change', function (event){
+                o.update();
+            });
+        }
+    };
+
+
     function BrushControl(element, attr){
         // Brush Controls link a select or input element
         // to a brush value.
@@ -10,7 +45,7 @@
         });
     }
 
-    BrushControl.prototype = clone(UIComponent.prototype);
+    BrushControl.prototype = $.clone(UIComponent.prototype);
     BrushControl.prototype.painter = painter;
     BrushControl.prototype.updateBrush = function (value){
         var opt = {};
@@ -38,8 +73,8 @@
         painter: painter.element
     };
 
-    $("#ControlsWrapper").addEventListener('mousedown', stopEvent, false);
-    $("#ControlsWrapper").addEventListener('mousemove', stopEvent, false);
+    $("#ControlsWrapper").addEventListener('mousedown', stopEvent);
+    $("#ControlsWrapper").addEventListener('mousemove', stopEvent);
 
     function stopEvent(event){
         event.stopPropagation();
@@ -48,35 +83,31 @@
 
     if (g.isTouchDevice){    
         ui.painter.addEventListener('touchstart', function (event){
-            var point = getPoint(event, this);
+            var point = $.getPoint(event, this);
 
             painter.beginPath();
             painter.moveTo(point.x, point.y);
-        }, false);
+        });
 
         ui.painter.addEventListener('touchmove', function (event){
-            var point = getPoint(event, this);
+            var point = $.getPoint(event, this);
 
             painter.lineTo(point.x, point.y);
-        }, false);
+        });
     } else {
-        g.mousedown = false;
-        window.addEventListener('mousedown', function (){ g.mousedown = true; }, true);
-        window.addEventListener('mouseup', function (){ g.mousedown = false; }, true);
-
-        (ui.painter).addEventListener('mousedown', function (event){
-            var point = getPoint(event, this);
+        ui.painter.addEventListener('mousedown', function (event){
+            var point = $.getPoint(event, this);
             painter.beginPath();
             painter.moveTo(point.x, point.y);    
-        }, false);
+        });
 
-        (ui.painter).addEventListener('mousemove', function (event){
+        ui.painter.addEventListener('mousemove', function (event){
            if (g.mousedown){
-                var point = getPoint(event, this);
+                var point = $.getPoint(event, this);
                 painter.lineTo(point.x, point.y);
                 event.preventDefault();
            } 
-        }, false);
+        });
     } 
 }());
 (function (){
@@ -88,7 +119,7 @@
 
     hideControls();
 
-    showHide.addEventListener('click', toggleControls, false);
+    showHide.addEventListener('click', toggleControls);
 
     function toggleControls(event){
         event.preventDefault();

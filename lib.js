@@ -1,199 +1,204 @@
-// Layout handling {{{
-resize();
-
-function resize(){
-    var wrapper = $('#MainWrapper');
-    if (wrapper) wrapper.setAttribute('style', 
-        'width: ' + window.innerWidth + 'px; ' +
-        'height: ' + window.innerHeight +'px;'
-    );
-}
-
-window.addEventListener('orientationchange', resize);
-window.addEventListener('resize', resize);
-document.addEventListener('touchmove', function (event){
-    event.preventDefault();
-});
-// }}}
-
-function log(obj){
-    var console = $("#Debug");
-    if (console){
-        var msg = $element("p", {'html': JSON.stringify(obj)});
-        inject(msg, console);
-    }
-}
-
-function $(str){
-    if (str instanceof Node) return str;
-    return document.querySelector(str);
-}
-
-function $$(str){
-    if (str instanceof NodeList || str instanceof Array) return $A(str);
-    return $A(document.querySelectorAll(str));
-}
-
-function $A(ls){
-    if (typeof(ls.item) === "function" && typeof(ls.length) === "number") {
-        var out = [], len = ls.length, i = 0;
-        for (; i < ls.length; i++) out.push(ls.item(i));
-        return out;
-    }
-
-    return Array.prototype.slice.call(ls);
-}
-
-function $element(name, attr){
-    var el = document.createElement(name), value;
-    for (var key in attr) if (attr.hasOwnProperty(key)) {
-        value = attr[key];
-        if (key === 'html') {
-            el.innerHTML = value;
-        } else {
-            el.setAttribute(key, value);
+var $ = (function (){
+    var $ = function (str){
+        if (str instanceof Node){
+            return str;
         }
-    }
+        return document.querySelector(str);
+    };
 
-    return el;
-}
+    $.globals = {};
+    
+    $.globals.wrapper = $("#MainWrapper");
 
-function sendPost(options){
-    var req = new XMLHttpRequest,
-        data = options.data || {},
-        parameters = [];
+    $.log = function (obj){
+        var console = $("#Debug");
+        if (console){
+            var msg = $.element("p", {'html': JSON.stringify(obj)});
+            $.inject(msg, console);
+        }
+    };
 
-    for (var key in data) if (data.hasOwnProperty(key)){
-        parameters.push(key + "=" + encodeURIComponent(data[key]));
-    }
-    parameters = parameters.join("&");
+    $.all = function (str){
+        if (str instanceof NodeList || str instanceof Array) {
+            return $.array(str);
+        }
+        return $.array(document.querySelectorAll(str));
+    };
 
-    req.onreadystatechange = callback;
-    req.open("POST", options.url, true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.setRequestHeader("Content-length", parameters.length);
-    req.setRequestHeader("Connection", "close");
-    req.send(parameters);
+    $.child = function (node, query){
+        return node.querySelector(query);
+    };
 
-    function callback(){
-        var complete = options.onComplete,
-            success = options.onSuccess,
-            fail = options.onFail;
+    $.children = function (node, query){
+        return $.array(node.querySelectorAll(query)); 
+    };
 
-        if (req.readyState == 4) {
-            if (complete) complete.call(req);
+    $.array = function (ls){
+        if (typeof(ls.item) === "function" && typeof(ls.length) === "number") {
+            var out = [], len = ls.length, i = 0;
+            for (; i < ls.length; i++) out.push(ls.item(i));
+            return out;
+        }
 
-            if (req.status == 200) {
-                if (success) success.call(req);
+        return Array.prototype.slice.call(ls);
+    };
+
+    $.lockLayout = function (){
+        var wrapper = $.globals.wrapper;
+
+        function resize(){
+            if (wrapper) wrapper.setAttribute('style', 
+                'width: ' + window.innerWidth + 'px; ' +
+                'height: ' + window.innerHeight +'px;'
+            );
+        }
+
+        resize();
+
+        window.addEventListener('orientationchange', resize);
+        window.addEventListener('resize', resize);
+        document.addEventListener('touchmove', function (event){
+            event.preventDefault();
+        });
+    };
+
+    $.element = function (name, attr){
+        var el = document.createElement(name), value;
+        for (var key in attr) if (attr.hasOwnProperty(key)) {
+            value = attr[key];
+            if (key === 'html') {
+                el.innerHTML = value;
             } else {
-                if (fail) fail.call(req);
+                el.setAttribute(key, value);
+            }
+        }
+
+        return el;
+    }
+
+    $.sendPost = function (options){
+        var req = new XMLHttpRequest,
+            data = options.data || {},
+            parameters = [];
+
+        for (var key in data) if (data.hasOwnProperty(key)){
+            parameters.push(key + "=" + encodeURIComponent(data[key]));
+        }
+
+        parameters = parameters.join("&");
+
+        req.onreadystatechange = callback;
+        req.open("POST", options.url, true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.send(parameters);
+
+        function callback(){
+            var complete = options.onComplete,
+                success = options.onSuccess,
+                fail = options.onFail;
+
+            if (req.readyState == 4) {
+                if (complete) complete.call(req);
+
+                if (req.status == 200) {
+                    if (success) success.call(req);
+                } else {
+                    if (fail) fail.call(req);
+                }
             }
         }
     }
-}
 
-function getOrientation(){
-    var o = window.orientation;
-    return {
-        portrait: (o === 0 || o === 180),
-        landscape: (o === 90 || o === -90),
-        left: o === -90,
-        right: o === 90,
-        inverted: o === 180
-    };
-}
 
-function getPoint(event, element){
-    var offset = getClientPosition(element);
+    $.getPoint = function (event, element){
+        var offset = $.getClientPosition(element);
 
-    if (event.targetTouches){
-        var touch = event.targetTouches[0];
+        if (event.targetTouches){
+            var touch = event.targetTouches[0];
 
-        return {
-            x: touch.pageX - offset.x,
-            y: touch.pageY - offset.y
-        };
-    } else {
-        return {
-            x: event.clientX - offset.x,
-            y: event.clientY - offset.y
-        };
-    }
-}
-
-function getClientPosition(element){
-    var wrapper = $('#MainWrapper');
-
-    return getPosition(element);
-
-    function getPosition(element){
-        var offset = {x: element.offsetLeft, y: element.offsetTop};
-
-        return element === wrapper ? {x: 0, y: 0}
-            :  translate(offset, getPosition(element.offsetParent));
-    }
-
-    function translate(pointA, pointB){
-        return {
-            'x': pointA.x + pointB.x,
-            'y': pointA.y + pointB.y
-        };
-    }
-}            
-
-function inject(child, parentNode){
-    if (parentNode.children.length){
-        parentNode.insertBefore(child, parentNode.children[0]);
-    } else {
-        parentNode.appendChild(child);
-    }
-}
-
-function UIComponent(element, callback){
-    this.element = $(element);
-    this.callback = callback;
-    this.listen();
-    this.update();
-}
-
-UIComponent.prototype = {
-    update: function (){
-        var value = this.getValue();
-        return this.callback(value);
-    },
-
-    getValue: function (){
-        var node = this.element;
-
-        if (node.localName === 'input'){
-            return node.getAttribute('value');
-        } else if (node.localName === 'select'){
-            return node.options[node.selectedIndex].getAttribute('value');
+            return {
+                x: touch.pageX - offset.x,
+                y: touch.pageY - offset.y
+            };
         } else {
-            return null;
+            return {
+                x: event.clientX - offset.x,
+                y: event.clientY - offset.y
+            };
         }
-    },
-
-    listen: function (){
-        var o = this;
-        this.element.addEventListener('change', function (event){
-            o.update();
-        }, false);
     }
-};
 
-function clone(obj){
-    var f = function(){};
-    f.prototype = obj;
-    return new f;
-}
+    $.getClientPosition = function (element){
+        return getPosition(element);
 
-$.globals = {};
-$.globals.isTouchDevice = (function (){
-    try {
-        document.createEvent("TouchEvent");
-        return true;
-    } catch (err){
+        function getPosition(element){
+            var offset = {x: element.offsetLeft, y: element.offsetTop};
+
+            return element === document.body ? {x: 0, y: 0}
+                :  translate(offset, getPosition(element.offsetParent));
+        }
+
+        function translate(pointA, pointB){
+            return {
+                'x': pointA.x + pointB.x,
+                'y': pointA.y + pointB.y
+            };
+        }
+    };
+
+    $.inject = function (child, parentNode){
+        if (parentNode.children.length){
+            parentNode.insertBefore(child, parentNode.children[0]);
+        } else {
+            parentNode.appendChild(child);
+        }
+    };
+
+    $.adopt = function (parent, children){
+        for (var i=0; i<children.length; i++) parent.appendChild(children[i]);
+    };
+
+    $.clone = function (obj){
+        var f = function(){};
+        f.prototype = obj;
+        return new f;
+    };
+
+    $.globals.isTouchDevice = (function (){
+        try {
+            document.createEvent("TouchEvent");
+            return true;
+        } catch (err){
+            return false;
+        }
+    }());
+   
+    function getOrientation(){
+        var o = window.orientation;
+        return window.orientation && {
+            portrait: (o === 0 || o === 180),
+            landscape: (o === 90 || o === -90),
+            left: o === -90,
+            right: o === 90,
+            inverted: o === 180
+        };
+    }
+
+    $.globals.orientation = getOrientation(); 
+
+    window.addEventListener('orientationchange', function (event){
+        $.globals.orientation = getOrientation();
+    });
+
+    $.globals.mousedown = false;
+    window.addEventListener('mousedown', function (){ $.globals.mousedown = true; }, true);
+    window.addEventListener('mouseup', function (){ $.globals.mousedown = false; }, true);
+
+    $.stop = function (event){
+        event.preventDefault();
+        event.stopPropagation();
         return false;
-    }
-}());
+    };
+
+    return $;
+}.call(this));
