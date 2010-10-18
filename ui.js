@@ -73,9 +73,6 @@
         painter: painter.element
     };
 
-    $("#ControlsWrapper").addEventListener('mousedown', $.stopEvent);
-    $("#ControlsWrapper").addEventListener('mousemove', $.stopEvent);
-
     $.gesture({
         'element': ui.painter,
         'start': function (event, point){
