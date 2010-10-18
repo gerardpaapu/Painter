@@ -5,6 +5,8 @@ var ColorPicker = function (options){
     this.setupEvents();
 };
 ColorPicker.prototype = {
+    // x, y, z are used as generic stand-ins for color-cube coordinates
+    // like r, g, b or H, S, L or whatever
     x: 0, y: 0, z: 0,
 
     zPickerWidth: 29,
@@ -42,31 +44,31 @@ ColorPicker.prototype = {
     },
 
     setupEvents: function (){
-        var picker = this;
-
         $.gesture({
             element: this.zPicker,
+            bind: this,
 
             move: function (event, point){
                 event.preventDefault();
-                picker.z = point.y;
-                picker.drawXYPicker();
+                this.z = point.y;
+                this.drawXYPicker();
             } 
         });
 
         $.gesture({
             element: this.xyPicker,
+            bind: this,
 
             move: function (event, point){
                 event.preventDefault();
-                picker.x = point.x;
-                picker.y = point.y;
-                picker.updateSample();
+                this.x = point.x;
+                this.y = point.y;
+                this.updateSample();
             },
 
             end: function (event, point){
-                picker.setInputValue();
-                picker.fireChange();
+                this.setInputValue();
+                this.fireChange();
             }
         });
     },
@@ -144,6 +146,16 @@ ColorPicker.prototype = {
             ];
 
         return 'rgb(' + components.join(', ') + ')';
+    },
+
+    save: function (){
+        var color = [this.x, this.y, this.z];
+        this.palette.push(color);
+        this.renderPalette();
+    },
+
+    restore: function(color){
+        
     },
 
     fireChange: function (){

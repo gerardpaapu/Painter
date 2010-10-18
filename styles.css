@@ -67,7 +67,7 @@ html, body {
 
 .colorpicker input[type=color],
 .colorpicker .sample,
-.saveToPalette {
+.colorpicker input[type=button] {
     display: block;
     float: left;
     height: 20px; 
