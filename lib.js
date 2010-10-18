@@ -36,7 +36,9 @@ var $ = (function (){
     $.array = function (ls){
         if (typeof(ls.item) === "function" && typeof(ls.length) === "number") {
             var out = [], len = ls.length, i = 0;
-            for (; i < ls.length; i++) out.push(ls.item(i));
+            for (; i < len; i++){
+                out.push(ls.item(i));
+            }
             return out;
         }
 
@@ -47,10 +49,13 @@ var $ = (function (){
         var wrapper = $.globals.wrapper;
 
         function resize(){
-            if (wrapper) wrapper.setAttribute('style', 
-                'width: ' + window.innerWidth + 'px; ' +
-                'height: ' + window.innerHeight +'px;'
-            );
+            if (wrapper){
+                wrapper.setAttribute(
+                    'style', 
+                    ('width: ' + window.innerWidth + 'px; ' +
+                     'height: ' + window.innerHeight +'px;')
+                );
+            }
         }
 
         resize();
@@ -63,26 +68,53 @@ var $ = (function (){
     };
 
     $.element = function (name, attr){
-        var el = document.createElement(name), value;
-        for (var key in attr) if (attr.hasOwnProperty(key)) {
-            value = attr[key];
-            if (key === 'html') {
-                el.innerHTML = value;
-            } else {
-                el.setAttribute(key, value);
+        var el = document.createElement(name), key, value;
+
+        for (key in attr) {
+            if (attr.hasOwnProperty(key)) {
+                value = attr[key];
+                if (key === 'html') {
+                    el.innerHTML = value;
+                } else {
+                    el.setAttribute(key, value);
+                }
             }
         }
 
         return el;
-    }
+    };
 
     $.sendPost = function (options){
-        var req = new XMLHttpRequest,
+        function callback(){
+            var complete = options.onComplete,
+            success = options.onSuccess,
+            fail = options.onFail;
+
+            if (req.readyState == 4) {
+                if (complete) {
+                    complete.call(req);
+                }
+
+                if (req.status == 200) {
+                    if (success) {
+                        success.call(req);
+                    }
+                } else {
+                    if (fail) {
+                        fail.call(req);
+                    }
+                }
+            }
+        }
+
+        var req = new XMLHttpRequest(),
             data = options.data || {},
             parameters = [];
 
-        for (var key in data) if (data.hasOwnProperty(key)){
-            parameters.push(key + "=" + encodeURIComponent(data[key]));
+        for (var key in data){
+            if (data.hasOwnProperty(key)){
+                parameters.push(key + "=" + encodeURIComponent(data[key]));
+            }
         }
 
         parameters = parameters.join("&");
@@ -91,24 +123,7 @@ var $ = (function (){
         req.open("POST", options.url, true);
         req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         req.send(parameters);
-
-        function callback(){
-            var complete = options.onComplete,
-                success = options.onSuccess,
-                fail = options.onFail;
-
-            if (req.readyState == 4) {
-                if (complete) complete.call(req);
-
-                if (req.status == 200) {
-                    if (success) success.call(req);
-                } else {
-                    if (fail) fail.call(req);
-                }
-            }
-        }
-    }
-
+    };
 
     $.getPoint = function (event, element){
         var offset = $.getClientPosition(element);
@@ -126,11 +141,9 @@ var $ = (function (){
                 y: event.clientY - offset.y
             };
         }
-    }
+    };
 
     $.getClientPosition = function (element){
-        return getPosition(element);
-
         function getPosition(element){
             var offset = {x: element.offsetLeft, y: element.offsetTop};
 
@@ -144,6 +157,8 @@ var $ = (function (){
                 'y': pointA.y + pointB.y
             };
         }
+
+        return getPosition(element);
     };
 
     $.inject = function (child, parentNode){
@@ -155,13 +170,24 @@ var $ = (function (){
     };
 
     $.adopt = function (parent, children){
-        for (var i=0; i<children.length; i++) parent.appendChild(children[i]);
+        for (var i=0; i<children.length; i++){
+            parent.appendChild(children[i]);
+        }
     };
 
     $.clone = function (obj){
-        var f = function(){};
-        f.prototype = obj;
-        return new f;
+        var F = function(){};
+        F.prototype = obj;
+        return new F();
+    };
+
+    $.extend = function (destination, source){
+        var hasOwn = Object.prototype.hasOwnProperty, key;
+        for (key in source) {
+            if (hasOwn.call(source, key)){
+                destination[key] = source[key];
+            }
+        }
     };
 
     $.globals.isTouchDevice = (function (){

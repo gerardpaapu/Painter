@@ -53,8 +53,12 @@
         this.painter.updateBrush(opt);
     };
 
+    var colorPicker = new ColorPicker();
+    $("#Controls").appendChild(colorPicker.container);
+
     var ui = ipaint.ui = {
-        colorpicker: new BrushControl("#ColorPicker input[type=color]", 'hex'),
+        colorPicker: colorPicker,
+        colorPickerInput: new BrushControl(colorPicker.input, 'hex'),
         opacity: new BrushControl("#Opacity", 'opacity'),
         mode: new BrushControl("#Mode", 'mode'),
         size: new BrushControl("#BrushSize", 'size'),

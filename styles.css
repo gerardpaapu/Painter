@@ -43,26 +43,30 @@ html, body {
 }
 
 
-#ColorPicker {
+.colorpicker {
     width: 295px;
     padding: 0;
     margin: 0 auto;
     float: left;
 }
 
-#ColorPicker .canvasWrapper {
+.colorpicker .canvasWrapper {
     margin: 4px;
     border: solid 1px white;
 }
 
-#ColorPicker canvas {
+.colorpicker canvas {
     float: left;
 }
 
-#ColorPicker input[type=color] { clear: left; }
+.colorpicker canvas:first-child {
+    border-right: solid 1px white;
+}
 
-#ColorPicker input[type=color],
-#ColorPicker .sample,
+.colorpicker input[type=color] { clear: left; }
+
+.colorpicker input[type=color],
+.colorpicker .sample,
 .saveToPalette {
     display: block;
     float: left;
@@ -76,19 +80,19 @@ html, body {
     text-align: center;
 }
 
-#ColorPicker .sample { 
+.colorpicker .sample { 
     background: pink;
     text-align: center;
 }
 
-#ColorPicker ul.palette {
+.colorpicker ul.palette {
     display: block;
     clear: both;
     list-style: none;
     padding: 0; margin: 0;
 }
 
-#ColorPicker ul.palette li {
+.colorpicker ul.palette li {
     display: block;
     width: 49px;
     height: 30px;
@@ -101,9 +105,9 @@ html, body {
 }
 
 #Controls:after, 
-#ColorPicker:after, 
-#ColorPicker .canvasWrapper:after,
-#ColorPicker ul.palette:after {
+.colorpicker:after, 
+.colorpicker .canvasWrapper:after,
+.colorpicker ul.palette:after {
     content: ".";
     clear: both;
     visibility: hidden;
