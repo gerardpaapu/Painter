@@ -1,12 +1,12 @@
-function ColorPicker = function (options){
+function ColorPicker(options){
     options = options || {};
     this.width = options.width;
     this.height = options.height;
     this.createElements();
     this.setupEvents();
     this.x = this.y = this.z = 0;
-};
-ColorPicker = {
+}
+ColorPicker.prototype = {
     'createElements': function (){
         this.container = $.element('div', {'class': colorpicker});
         this.zPicker = $.element('canvas', {width: 20, height: 255});
@@ -35,8 +35,8 @@ ColorPicker = {
 
     drawZPicker: function (){
         var ctx = this.zPicker.getContext('2d');
-        var step = this.step, size = this.size, x = y = z = 0;
-        for (z=0; z < size; z += step){
+        var step = this.step, size = this.size, x, y, z;
+        for (x = y = z = 0; z < size; z += step){
             ctx.fillStyle = this.color(0, 0, z);
             ctx.fillRect(0, z, width, z + step);
         }
@@ -45,9 +45,11 @@ ColorPicker = {
     drawXYPicker: function (){
         var ctx = this.xyPicker.getContext('2d'); 
         var step = this.step, size = this.size, z = this.z, x, y;
-        for (x = 0; x < size; x += step) for (y = 0; y < size; y += step){
-            ctx.fillStyle = this.color(x, y, z);
-            ctx.fillRect(x, y, x + step, y + step);
+        for (x = 0; x < size; x += step){
+            for (y = 0; y < size; y += step){
+                ctx.fillStyle = this.color(x, y, z);
+                ctx.fillRect(x, y, x + step, y + step);
+            }
         }
     },
 

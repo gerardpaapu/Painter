@@ -1,5 +1,6 @@
+var Painter, Layer, LayerCollection, Brush;
 // Painter - A Facade Class for painting on multiple layers {{{
-function Painter(options){
+Painter = function (options){
     options = options || {};
     this.width = options.width   || 600;
     this.height = options.height || 400;
@@ -7,16 +8,18 @@ function Painter(options){
     this.brush = options.brush || new Brush();
     this.createElement();
     this.setCurrentLayer(0);
-}
+};
 
 Painter.prototype = {
     'createElement': function (){
-        if (this.element) return false;
+        if (this.element){
+            return false;
+        }
 
         this.element = $.element("div", {
             'class': "painterView",
-            'style': "width: " + this.width + "px; " +
-                     "height: " + this.height + "px;" 
+            'style': ("width: " + this.width + "px; " +
+                      "height: " + this.height + "px;") 
         });
 
         this.element.appendChild(this.layers.element);
@@ -71,13 +74,13 @@ Painter.fromJSON = function (json){
 };
 // }}}
 // LayerCollection {{{
-function LayerCollection(width, height){
+LayerCollection = function (width, height){
     this.width = width;
     this.height = height;
     this.items = [];
     this.createElement();
     this.createLayer('Background');
-}
+};
 
 LayerCollection.prototype = {
     'createElement': function (){
@@ -104,7 +107,7 @@ LayerCollection.prototype = {
     },
 
     'removeLayer': function (layer){
-        var layer = this.get(layer);
+        layer = this.get(layer);
             
         if (layer){
             var index = this.items.indexOf(layer);
@@ -142,7 +145,7 @@ LayerCollection.prototype = {
             var image = new Image();
             image.onload = function (){
                 ctx.drawImage(image, 0, 0);
-            }
+            };
 
             image.src = layer.canvas.toDataURL();
         });  
@@ -162,18 +165,20 @@ LayerCollection.prototype = {
 };
 
 LayerCollection.fromJSON = function (str){
-    var layers = new LayerCollection(data.width, data.height),
-        data = JSON.parse(str), layer;
+    var data = JSON.parse(str), layer,
+        layers = new LayerCollection(data.width, data.height);
 
-    for (var name in data) if (data.hasOwnProperty(name)){
-        layers.createLayer(name).loadImage(data[name]);
+    for (var name in data) {
+        if (data.hasOwnProperty(name)){
+            layers.createLayer(name).loadImage(data[name]);
+        }
     }
 
     return layers;
-}
+};
 // }}}
 // Layer {{{
-function Layer(name, width, height){
+Layer = function (name, width, height){
     this.name = name;
     this.canvas = $.element("canvas", {
         'width': width,
@@ -182,14 +187,17 @@ function Layer(name, width, height){
     });
 
     this.context = this.canvas.getContext('2d');
-}
+};
 
 Layer.prototype = {
     'loadImage': function (uri, preserve){
         var layer = this, image = new Image();
         
         image.onload = function (){
-            if (!preserve) layer.clear();
+            if (!preserve) {
+                layer.clear();
+            }
+
             layer.context.save();
             layer.context.globalCompositeOperation = "source-over";
             layer.context.drawImage(image, 0, 0);
@@ -223,9 +231,11 @@ Layer.prototype = {
 };
 // }}}
 // Brush {{{
-function Brush(data){
-    if (data) this.load(data);
-}
+Brush = function (data){
+    if (data){
+        this.load(data);
+    }
+};
 
 Brush.prototype = {
     'color': [0, 0, 0],
@@ -235,7 +245,7 @@ Brush.prototype = {
 
     'getRGBA': function (){
         var components = this.color.concat([this.opacity]); 
-        return "rgba("+components.join(", ")+")"
+        return "rgba(" + components.join(", ") + ")";
     },
 
     'setSize': function (size){
@@ -249,8 +259,6 @@ Brush.prototype = {
     },
 
     'setColorRGB': function (r, g, b){
-        this.color = [clean(r), clean(g), clean(b)];
-
         function clean (n){
             // ensure that n is an integer (0 - 255)
             n = parseInt(n, 10);
@@ -258,6 +266,8 @@ Brush.prototype = {
             n = Math.min(n, 255);
             return n;
         }
+
+        this.color = [clean(r), clean(g), clean(b)];
     },
 
     'setColorHex': function (str){
@@ -279,12 +289,29 @@ Brush.prototype = {
     },
 
     'load': function (data){
-        if (data.rgb)     this.setColorRGB.apply(this, data.rgb);
-        if (data.hex)     this.setColorHex(data.hex);
-        if (data.opacity) this.setOpacity(data.opacity);
-        if (data.size)    this.setSize(data.size);
-        if (data.style)   this.setStyle(data.style);
-        if (data.mode)    this.setMode(data.mode);
+        if (data.rgb) { 
+            this.setColorRGB.apply(this, data.rgb); 
+        }
+
+        if (data.hex) {
+            this.setColorHex(data.hex); 
+        }
+        
+        if (data.opacity) { 
+            this.setOpacity(data.opacity); 
+        }
+        
+        if (data.size) { 
+            this.setSize(data.size); 
+        }
+        
+        if (data.style) { 
+            this.setStyle(data.style); 
+        }
+
+        if (data.mode) {
+            this.setMode(data.mode);
+        }
     }
 };
 
