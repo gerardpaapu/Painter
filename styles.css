@@ -8,6 +8,10 @@ html, body {
     position: relative;
     padding: 0; margin: 0;
     overflow: hidden;
+    background: black;
+}
+
+.layerContainer {
     background: #ccc url(img/background.png) top left repeat;
 }
 
