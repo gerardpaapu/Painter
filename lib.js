@@ -236,42 +236,45 @@ var $ = (function (){
     };
 
     $.gesture = function (opt){
-        var element = opt.element;
+        var element = opt.element, bind = opt.bind;
         if (!element) {
             return false;
         }
 
-        function bind(type, handler){
+        function addListener(type, handler){
             element.addEventListener(type, function (event){
                 var point = $.getPoint(event, this);
-                handler.call(this, event, point);
+                handler.call(bind || this, event, point);
             });
         }
 
         if ($.globals.isTouchDevice){
             if (opt.start){
-                bind('touchstart', opt.start);
+                addListener('touchstart', opt.start);
             }
 
             if (opt.move){
-                bind('touchmove', opt.move);
+                addListener('touchmove', opt.move);
             }
 
             if (opt.end){
-                bind('touchend', opt.move);
+                addListener('touchend', opt.move);
             }
         } else {
             var gesture_active = false;
+
             element.addEventListener('mousedown', function (_){ gesture_active = true; }, true);
-            element.addEventListener('mouseup', function (_){ gesture_active = false; }, true);
-            element.addEventListener('mouseout', function (_){ gesture_active = false; }, true);
+
+            ['mouseup', 'mouseout', 'blur'].forEach(function (type){
+                element.addEventListener(type, function (_){ gesture_active = false; }, true);
+            });
             
             if (opt.start) {
-                bind('mousedown', opt.start);
+                addListener('mousedown', opt.start);
             } 
 
             if (opt.move){
-                bind('mousemove', function (event, point){
+                addListener('mousemove', function (event, point){
                     if (gesture_active){
                         opt.move.call(this, event, point);
                     }
@@ -279,8 +282,9 @@ var $ = (function (){
             }
 
             if (opt.end){
-                bind('mouseout', opt.end);
-                bind('mouseup', opt.end);
+                addListener('mouseout', opt.end);
+                addListener('mouseup', opt.end);
+                addListener('blur', opt.end);
             }
         }
     };
