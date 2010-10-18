@@ -27,9 +27,9 @@
         },
 
         listen: function (){
-            var o = this;
+            var component = this;
             this.element.addEventListener('change', function (event){
-                o.update();
+                component.update();
             });
         }
     };
@@ -53,8 +53,13 @@
         this.painter.updateBrush(opt);
     };
 
+    var colorPicker = new ColorPicker();
+
+    $("#Controls").appendChild(colorPicker.container);
+
     var ui = ipaint.ui = {
-        colorpicker: new BrushControl("#ColorPicker input[type=color]", 'hex'),
+        colorPicker: colorPicker,
+        colorPickerInput: new BrushControl(colorPicker.input, 'hex'),
         opacity: new BrushControl("#Opacity", 'opacity'),
         mode: new BrushControl("#Mode", 'mode'),
         size: new BrushControl("#BrushSize", 'size'),
@@ -74,15 +79,17 @@
     };
 
     $.gesture({
-        'element': ui.painter,
-        'start': function (event, point){
-            painter.beginPath();
-            painter.moveTo(point.x, point.y);
+        element: ui.painter,
+        bind: painter,
+        start: function (event, point){
+            event.preventDefault();
+            this.beginPath();
+            this.moveTo(point.x, point.y);
         },
 
-        'move': function (event, point){
+        move: function (event, point){
             event.preventDefault();
-            painter.lineTo(point.x, point.y);
+            this.lineTo(point.x, point.y);
         }
     });
 }());

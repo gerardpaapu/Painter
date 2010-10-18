@@ -36,7 +36,9 @@ var $ = (function (){
     $.array = function (ls){
         if (typeof(ls.item) === "function" && typeof(ls.length) === "number") {
             var out = [], len = ls.length, i = 0;
-            for (; i < ls.length; i++) out.push(ls.item(i));
+            for (; i < len; i++){
+                out.push(ls.item(i));
+            }
             return out;
         }
 
@@ -47,10 +49,13 @@ var $ = (function (){
         var wrapper = $.globals.wrapper;
 
         function resize(){
-            if (wrapper) wrapper.setAttribute('style', 
-                'width: ' + window.innerWidth + 'px; ' +
-                'height: ' + window.innerHeight +'px;'
-            );
+            if (wrapper){
+                wrapper.setAttribute(
+                    'style', 
+                    ('width: ' + window.innerWidth + 'px; ' +
+                     'height: ' + window.innerHeight +'px;')
+                );
+            }
         }
 
         resize();
@@ -63,26 +68,53 @@ var $ = (function (){
     };
 
     $.element = function (name, attr){
-        var el = document.createElement(name), value;
-        for (var key in attr) if (attr.hasOwnProperty(key)) {
-            value = attr[key];
-            if (key === 'html') {
-                el.innerHTML = value;
-            } else {
-                el.setAttribute(key, value);
+        var el = document.createElement(name), key, value;
+
+        for (key in attr) {
+            if (attr.hasOwnProperty(key)) {
+                value = attr[key];
+                if (key === 'html') {
+                    el.innerHTML = value;
+                } else {
+                    el.setAttribute(key, value);
+                }
             }
         }
 
         return el;
-    }
+    };
 
     $.sendPost = function (options){
-        var req = new XMLHttpRequest,
+        function callback(){
+            var complete = options.onComplete,
+            success = options.onSuccess,
+            fail = options.onFail;
+
+            if (req.readyState == 4) {
+                if (complete) {
+                    complete.call(req);
+                }
+
+                if (req.status == 200) {
+                    if (success) {
+                        success.call(req);
+                    }
+                } else {
+                    if (fail) {
+                        fail.call(req);
+                    }
+                }
+            }
+        }
+
+        var req = new XMLHttpRequest(),
             data = options.data || {},
             parameters = [];
 
-        for (var key in data) if (data.hasOwnProperty(key)){
-            parameters.push(key + "=" + encodeURIComponent(data[key]));
+        for (var key in data){
+            if (data.hasOwnProperty(key)){
+                parameters.push(key + "=" + encodeURIComponent(data[key]));
+            }
         }
 
         parameters = parameters.join("&");
@@ -91,24 +123,7 @@ var $ = (function (){
         req.open("POST", options.url, true);
         req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         req.send(parameters);
-
-        function callback(){
-            var complete = options.onComplete,
-                success = options.onSuccess,
-                fail = options.onFail;
-
-            if (req.readyState == 4) {
-                if (complete) complete.call(req);
-
-                if (req.status == 200) {
-                    if (success) success.call(req);
-                } else {
-                    if (fail) fail.call(req);
-                }
-            }
-        }
-    }
-
+    };
 
     $.getPoint = function (event, element){
         var offset = $.getClientPosition(element);
@@ -126,11 +141,9 @@ var $ = (function (){
                 y: event.clientY - offset.y
             };
         }
-    }
+    };
 
     $.getClientPosition = function (element){
-        return getPosition(element);
-
         function getPosition(element){
             var offset = {x: element.offsetLeft, y: element.offsetTop};
 
@@ -144,6 +157,8 @@ var $ = (function (){
                 'y': pointA.y + pointB.y
             };
         }
+
+        return getPosition(element);
     };
 
     $.inject = function (child, parentNode){
@@ -155,13 +170,24 @@ var $ = (function (){
     };
 
     $.adopt = function (parent, children){
-        for (var i=0; i<children.length; i++) parent.appendChild(children[i]);
+        for (var i=0; i<children.length; i++){
+            parent.appendChild(children[i]);
+        }
     };
 
     $.clone = function (obj){
-        var f = function(){};
-        f.prototype = obj;
-        return new f;
+        var F = function(){};
+        F.prototype = obj;
+        return new F();
+    };
+
+    $.extend = function (destination, source){
+        var hasOwn = Object.prototype.hasOwnProperty, key;
+        for (key in source) {
+            if (hasOwn.call(source, key)){
+                destination[key] = source[key];
+            }
+        }
     };
 
     $.globals.isTouchDevice = (function (){
@@ -210,51 +236,84 @@ var $ = (function (){
     };
 
     $.gesture = function (opt){
-        var element = opt.element;
+        // Handle gestures is a uniform way in touch
+        // devices and mouse driven browsers:
+        //
+        // $.gesture({
+        //     element: $("Target"), 
+        //     // The element to listen to
+        //     // (non-optional)
+        //
+        //     bind: this 
+        //     // The object to bind the handlers to
+        //     // (optional)
+        //
+        //     start: function (event, point){
+        //        // (optional)
+        //        // handle the start of the gesture
+        //     },
+        //     
+        //     move: function (event, point){
+        //        // (optional)
+        //        // handle movement during the gesture
+        //     },
+        //
+        //     end: function (event, point){
+        //        // (optional)
+        //        // handle the end of the gesture 
+        //     }
+        // })
+        var element = opt.element,
+            bind = opt.bind;
+
+        function addListener(type, handler){
+            element.addEventListener(type, function (event){
+                var point = $.getPoint(event, this);
+                handler.call(bind || this, event, point);
+            });
+        }
+        
         if (!element) {
             return false;
         }
 
-        function bind(type, handler){
-            element.addEventListener(type, function (event){
-                var point = $.getPoint(event, this);
-                handler.call(this, event, point);
-            });
-        }
-
         if ($.globals.isTouchDevice){
             if (opt.start){
-                bind('touchstart', opt.start);
+                addListener('touchstart', opt.start);
             }
 
             if (opt.move){
-                bind('touchmove', opt.move);
+                addListener('touchmove', opt.move);
             }
 
             if (opt.end){
-                bind('touchend', opt.move);
+                addListener('touchend', opt.move);
             }
         } else {
             var gesture_active = false;
+
             element.addEventListener('mousedown', function (_){ gesture_active = true; }, true);
-            element.addEventListener('mouseup', function (_){ gesture_active = false; }, true);
-            element.addEventListener('mouseout', function (_){ gesture_active = false; }, true);
+
+            ['mouseup', 'mouseout', 'blur'].forEach(function (type){
+                element.addEventListener(type, function (_){ gesture_active = false; }, true);
+            });
             
             if (opt.start) {
-                bind('mousedown', opt.start);
+                addListener('mousedown', opt.start);
             } 
 
             if (opt.move){
-                bind('mousemove', function (event, point){
+                addListener('mousemove', function (event, point){
                     if (gesture_active){
-                        opt.move.call(this, event, point);
+                        opt.move.call(this || bind, event, point);
                     }
                 });
             }
 
             if (opt.end){
-                bind('mouseout', opt.end);
-                bind('mouseup', opt.end);
+                addListener('mouseout', opt.end);
+                addListener('mouseup', opt.end);
+                addListener('blur', opt.end);
             }
         }
     };
