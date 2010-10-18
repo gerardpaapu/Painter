@@ -236,16 +236,45 @@ var $ = (function (){
     };
 
     $.gesture = function (opt){
-        var element = opt.element, bind = opt.bind;
-        if (!element) {
-            return false;
-        }
+        // Handle gestures is a uniform way in touch
+        // devices and mouse driven browsers:
+        //
+        // $.gesture({
+        //     element: $("Target"), 
+        //     // The element to listen to
+        //     // (non-optional)
+        //
+        //     bind: this 
+        //     // The object to bind the handlers to
+        //     // (optional)
+        //
+        //     start: function (event, point){
+        //        // (optional)
+        //        // handle the start of the gesture
+        //     },
+        //     
+        //     move: function (event, point){
+        //        // (optional)
+        //        // handle movement during the gesture
+        //     },
+        //
+        //     end: function (event, point){
+        //        // (optional)
+        //        // handle the end of the gesture 
+        //     }
+        // })
+        var element = opt.element,
+            bind = opt.bind;
 
         function addListener(type, handler){
             element.addEventListener(type, function (event){
                 var point = $.getPoint(event, this);
                 handler.call(bind || this, event, point);
             });
+        }
+        
+        if (!element) {
+            return false;
         }
 
         if ($.globals.isTouchDevice){
@@ -276,7 +305,7 @@ var $ = (function (){
             if (opt.move){
                 addListener('mousemove', function (event, point){
                     if (gesture_active){
-                        opt.move.call(this, event, point);
+                        opt.move.call(this || bind, event, point);
                     }
                 });
             }

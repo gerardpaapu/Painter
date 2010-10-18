@@ -53,7 +53,7 @@
         this.painter.updateBrush(opt);
     };
 
-    var colorPicker = new ColorPicker({size: 160, zPickerWidth: 12, step: 3});
+    var colorPicker = new ColorPicker();
 
     $("#Controls").appendChild(colorPicker.container);
 
