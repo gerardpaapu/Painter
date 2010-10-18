@@ -96,10 +96,6 @@
         showHide = $('#ControlsShowHide'),
         controlsVisible = true;
 
-    hideControls();
-
-    showHide.addEventListener('click', toggleControls);
-
     function toggleControls(event){
         event.preventDefault();
         if (controlsVisible){
@@ -122,6 +118,11 @@
         controlsVisible = false;
     }
 
+    hideControls();
+
+    showHide.addEventListener('click', toggleControls);
+
+
     window.addEventListener('orientationchange', function (event){
         var orientation = getOrientation();
         if (orientation.portrait){
@@ -130,7 +131,10 @@
             $("#ColorPicker").style.display = "none";
         }
 
-        if (controlsVisible) showControls();
-        else hideControls();
+        if (controlsVisible){
+            showControls();
+        } else {
+            hideControls();
+        }
     });
 }());
