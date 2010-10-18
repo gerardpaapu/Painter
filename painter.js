@@ -8,6 +8,8 @@ Painter = function (options){
     this.brush = options.brush || new Brush();
     this.createElement();
     this.setCurrentLayer(0);
+    this.zoom = this.inverseZoom = 1;
+    this.offset = {x: 0, y: 0};
 };
 
 Painter.prototype = {
@@ -18,8 +20,11 @@ Painter.prototype = {
 
         this.element = $.element("div", {
             'class': "painterView",
-            'style': ("width: " + this.width + "px; " +
-                      "height: " + this.height + "px;") 
+            'style': (
+                "width: " + this.width + "px; " +
+                "height: " + this.height + "px;" +
+                "-webkit-transform-origin: 0 0;"
+             ) 
         });
 
         this.element.appendChild(this.layers.element);
@@ -30,10 +35,14 @@ Painter.prototype = {
     },
 
     'moveTo': function (x, y){
+        x = x * this.inverseZoom + this.offset.x;
+        y = y * this.inverseZoom + this.offset.y;
         this.currentLayer.context.moveTo(x, y);
     },
 
     'lineTo': function (x, y){
+        x = x * this.inverseZoom + this.offset.x;
+        y = y * this.inverseZoom + this.offset.y;
         var context = this.currentLayer.context;
         context.lineTo(x, y);
         context.stroke();
@@ -61,6 +70,25 @@ Painter.prototype = {
     'updateBrush': function (data){
         this.brush.load(data);
         this.currentLayer.loadBrush(this.brush);
+    },
+
+    'setZoom': function (zoom){
+        this.zoom = zoom;
+        this.inverseZoom = 1 / zoom;
+        this.setTransform();
+    },
+
+    'setOffset': function (x, y){
+        this.offset.x = x;
+        this.offset.y = y;
+        this.setTransform();
+    },
+
+    'setTransform': function (){
+        this.element.style["-webkit-transform"] = (
+            "scale(" + this.zoom+") " +
+            "translate(" + (-this.offset.x) + "px, " + (-this.offset.y) + "px)"
+        );
     }
 };
 
