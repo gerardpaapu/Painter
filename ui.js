@@ -73,42 +73,21 @@
         painter: painter.element
     };
 
-    $("#ControlsWrapper").addEventListener('mousedown', stopEvent);
-    $("#ControlsWrapper").addEventListener('mousemove', stopEvent);
+    $("#ControlsWrapper").addEventListener('mousedown', $.stopEvent);
+    $("#ControlsWrapper").addEventListener('mousemove', $.stopEvent);
 
-    function stopEvent(event){
-        event.stopPropagation();
-        return false;
-    }
-
-    if (g.isTouchDevice){    
-        ui.painter.addEventListener('touchstart', function (event){
-            var point = $.getPoint(event, this);
-
+    $.gesture({
+        'element': ui.painter,
+        'start': function (event, point){
             painter.beginPath();
             painter.moveTo(point.x, point.y);
-        });
+        },
 
-        ui.painter.addEventListener('touchmove', function (event){
-            var point = $.getPoint(event, this);
-
+        'move': function (event, point){
+            event.preventDefault();
             painter.lineTo(point.x, point.y);
-        });
-    } else {
-        ui.painter.addEventListener('mousedown', function (event){
-            var point = $.getPoint(event, this);
-            painter.beginPath();
-            painter.moveTo(point.x, point.y);    
-        });
-
-        ui.painter.addEventListener('mousemove', function (event){
-           if (g.mousedown){
-                var point = $.getPoint(event, this);
-                painter.lineTo(point.x, point.y);
-                event.preventDefault();
-           } 
-        });
-    } 
+        }
+    });
 }());
 (function (){
     // Show and hide the controls

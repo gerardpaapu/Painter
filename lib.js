@@ -194,10 +194,69 @@ var $ = (function (){
     window.addEventListener('mousedown', function (){ $.globals.mousedown = true; }, true);
     window.addEventListener('mouseup', function (){ $.globals.mousedown = false; }, true);
 
-    $.stop = function (event){
+    $.stopEvent = function (event){
         event.preventDefault();
         event.stopPropagation();
         return false;
+    };
+
+    $.alert = function (msg){
+        return function (){
+            var str = msg.replace(/\{([a-z0-9_]+)\}/ig, function (_, key){
+                return this[key];
+            });
+            alert(msg);
+        };     
+    };
+
+    $.gesture = function (opt){
+        var element = opt.element;
+        if (!element) {
+            return false;
+        }
+
+        function bind(type, handler){
+            element.addEventListener(type, function (event){
+                var point = $.getPoint(event, this);
+                handler.call(this, event, point);
+            });
+        }
+
+        if ($.globals.isTouchDevice){
+            if (opt.start){
+                bind('touchstart', opt.start);
+            }
+
+            if (opt.move){
+                bind('touchstart', opt.move);
+            }
+
+            if (opt.end){
+                bind('touchend', opt.move);
+            }
+        } else {
+            var gesture_active = false;
+            element.addEventListener('mousedown', function (_){ gesture_active = true; }, true);
+            element.addEventListener('mouseup', function (_){ gesture_active = false; }, true);
+            element.addEventListener('mouseout', function (_){ gesture_active = false; }, true);
+            
+            if (opt.start) {
+                bind('mousedown', opt.start);
+            } 
+
+            if (opt.move){
+                bind('mousemove', function (event, point){
+                    if (gesture_active){
+                        opt.move.call(this, event, point);
+                    }
+                });
+            }
+
+            if (opt.end){
+                bind('mouseout', opt.end);
+                bind('mouseup', opt.end);
+            }
+        }
     };
 
     return $;
