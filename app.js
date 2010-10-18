@@ -22,16 +22,11 @@ ipaint.upload = function (){
 
     if (data) {
         try {
-            sendPost({
-                'url': "http://localhost:8675",
+            $.sendPost({
+                'url': "/upload",
                 'data': {'data': data},
-                'onSuccess': function (){
-                    alert("uploaded to: " + this.responseText);
-                },
-
-                'onFail': function (){
-                    alert("Image Upload Failed");
-                }
+                'onSuccess': $.alert("uploaded to {responseText}"),
+                'onFail':  $.alert("upload failed: {responseText}")
             });
         } catch (err) {
             $.log(err);
