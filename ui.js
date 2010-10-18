@@ -34,7 +34,6 @@
         }
     };
 
-
     function BrushControl(element, attr){
         // Brush Controls link a select or input element
         // to a brush value.
@@ -57,25 +56,25 @@
 
     $("#Controls").appendChild(colorPicker.container);
 
+    var layerpicker = $.element("select", {id: "Layers"}); 
+    for (var i=0; i < 10; i++){
+        $.inject(
+            $.element("option", {value: ''+i, html: "layer "+i}),
+            layerpicker
+        );
+    }
+    $("#Controls").appendChild(layerpicker);
+
     var ui = ipaint.ui = {
         colorPicker: colorPicker,
         colorPickerInput: new BrushControl(colorPicker.input, 'hex'),
         opacity: new BrushControl("#Opacity", 'opacity'),
         mode: new BrushControl("#Mode", 'mode'),
         size: new BrushControl("#BrushSize", 'size'),
-        upload: (function (){
-            var el = $("#Upload");
-            var fn = function (event){
-                ipaint.upload();
-            };
-
-            el.addEventListener('click', fn);
-            return {
-                element: el,
-                handler: fn
-            };
-        }()),
-        painter: painter.element
+        painter: painter.element,
+        layers: new UIComponent(layerpicker, function (value){
+            painter.setCurrentLayer(parseInt(value, 10));
+        })
     };
 
     $.gesture({

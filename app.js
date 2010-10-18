@@ -8,7 +8,11 @@ ipaint.painter = (function (){
     var container = $('#MainWrapper'),
         size = Math.max(container.clientWidth, container.clientHeight),
         painter = new Painter({width: size, height: size}),
-        el = painter.element;
+        el = painter.element, i;
+
+    for (i = 0; i < 10; i++){
+        painter.layers.createLayer('layer '+i);
+    }
     
     container.insertBefore(el, container.children[0]);
     return painter;
