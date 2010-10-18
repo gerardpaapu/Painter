@@ -228,7 +228,7 @@ var $ = (function (){
             }
 
             if (opt.move){
-                bind('touchstart', opt.move);
+                bind('touchmove', opt.move);
             }
 
             if (opt.end){
