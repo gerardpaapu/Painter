@@ -22,6 +22,7 @@ var $ = (function (){
         if (str instanceof NodeList || str instanceof Array) {
             return $.array(str);
         }
+
         return $.array(document.querySelectorAll(str));
     };
 
@@ -109,11 +110,12 @@ var $ = (function (){
 
         var req = new XMLHttpRequest(),
             data = options.data || {},
+            hasOwn = Object.prototype.hasOwnProperty,
             parameters = [];
 
         for (var key in data){
-            if (data.hasOwnProperty(key)){
-                parameters.push(key + "=" + encodeURIComponent(data[key]));
+            if (hasOwn.call(data, key)){
+                parameters.push(key + "=" + escape(data[key]));
             }
         }
 
