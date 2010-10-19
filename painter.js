@@ -86,7 +86,7 @@ Painter.prototype = {
 
     'setTransform': function (){
         this.element.style["-webkit-transform"] = (
-            "scale(" + this.zoom+") " +
+            "scale(" + this.zoom + ") " +
             "translate(" + (-this.offset.x) + "px, " + (-this.offset.y) + "px)"
         );
     }
