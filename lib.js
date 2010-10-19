@@ -88,8 +88,8 @@ var $ = (function (){
     $.sendPost = function (options){
         function callback(){
             var complete = options.onComplete,
-            success = options.onSuccess,
-            fail = options.onFail;
+                success = options.onSuccess,
+                fail = options.onFail;
 
             if (req.readyState == 4) {
                 if (complete) {
@@ -290,7 +290,7 @@ var $ = (function (){
             }
 
             if (opt.end){
-                addListener('touchend', opt.move);
+                addListener('touchend', opt.end);
             }
         } else {
             var gesture_active = false;
