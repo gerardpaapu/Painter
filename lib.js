@@ -132,16 +132,20 @@ var $ = (function (){
 
         if (event.targetTouches){
             var touch = event.targetTouches[0];
-
+            if (!(touch && touch.pageX && touch.pageY)){
+                return false;
+            }
             return {
                 x: touch.pageX - offset.x,
                 y: touch.pageY - offset.y
             };
-        } else {
+        } else if (event.clientX && event.clientY) {
             return {
                 x: event.clientX - offset.x,
                 y: event.clientY - offset.y
             };
+        } else {
+            return false;
         }
     };
 
@@ -281,15 +285,16 @@ var $ = (function (){
         }
 
         if ($.globals.isTouchDevice){
+
             if (opt.start){
                 addListener('touchstart', opt.start);
             }
 
-            if (opt.move){
+            if (opt.hasOwnProperty('move')){
                 addListener('touchmove', opt.move);
             }
 
-            if (opt.end){
+            if (opt.hasOwnProperty('end')){
                 addListener('touchend', opt.end);
             }
         } else {
