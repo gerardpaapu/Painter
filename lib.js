@@ -230,10 +230,11 @@ var $ = (function (){
 
     $.alert = function (msg){
         return function (){
-            var str = msg.replace(/\{([a-z0-9_]+)\}/ig, function (_, key){
-                return this[key];
-            });
-            alert(msg);
+            var ctx = this,
+                str = msg.replace(/\{([a-z0-9_]+)\}/ig, function (_, key){
+                    return ctx[key];
+                });
+            alert(str);
         };     
     };
 
