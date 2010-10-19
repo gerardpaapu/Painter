@@ -152,7 +152,7 @@ LayerCollection.prototype = {
     },
 
     'moveLayer': function (layer, where){
-        this.removeLayer(this.removeLayer(layer), where);
+        this.insertLayer(this.removeLayer(layer), where);
     },
 
     'index': function (where){
@@ -242,10 +242,8 @@ Layer.prototype = {
     },
 
     'clear': function (){
-        var width = this.canvas.getAttribute('width'),
-            height = this.canvas.getAttribute('height');
-
-        this.context.clearRect(0, 0, width, height);
+        var canvas = this.canvas;
+        this.context.clearRect(0, 0, canvas.width, canvas.height);
     },
 
     'loadBrush': function (brush){
@@ -318,7 +316,7 @@ Brush.prototype = {
     },
 
     'setMode': function (mode){
-        this.mode = (Brush.modes[mode] ? mode : "paint");
+        this.mode = (Brush.modes.hasOwnProperty(mode) ? mode : "paint");
     },
 
     'getCompositeOperation': function (){
