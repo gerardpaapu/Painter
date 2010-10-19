@@ -115,7 +115,7 @@ var $ = (function (){
 
         for (var key in data){
             if (hasOwn.call(data, key)){
-                parameters.push(key + "=" + escape(data[key]));
+                parameters.push(key + "=" + encodeURIComponent(data[key]));
             }
         }
 
