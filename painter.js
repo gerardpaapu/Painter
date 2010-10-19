@@ -171,17 +171,15 @@ LayerCollection.prototype = {
     },
 
     'getMergedData': function (){
-        var canvas = $.element("canvas", {'width': this.width, 'height': this.height});
-        var ctx = canvas.getContext("2d");
+        var canvas = $.element("canvas", {'width': this.width, 'height': this.height}),
+            ctx = canvas.getContext("2d"),
+            length = this.items.length,
+            index, item;
 
-        this.items.forEach(function (layer){
-            var image = new Image();
-            image.onload = function (){
-                ctx.drawImage(image, 0, 0);
-            };
-
-            image.src = layer.canvas.toDataURL();
-        });  
+        for (index = 0; index < length; index++){
+            item = this.items[i].canvas;
+            ctx.drawImage(item, 0, 0, item.width, item.height);
+        }
 
         return canvas.toDataURL();
     },
