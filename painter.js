@@ -91,7 +91,7 @@ Painter.prototype = {
 
     'setTransform': function (){
         this.element.style["-webkit-transform"] = (
-            "scale(" + this.zoom+") " +
+            "scale(" + this.zoom + ") " +
             "translate(" + (-this.offset.x) + "px, " + (-this.offset.y) + "px)"
         );
     }
@@ -202,7 +202,7 @@ LayerCollection.fromJSON = function (str){
         layers = new LayerCollection(data.width, data.height);
 
     for (var name in data) {
-        if (data.hasOwnProperty(name)){
+        if (data.hasOwnProperty(name)) {
             layers.createLayer(name).loadImage(data[name]);
         }
     }
@@ -224,7 +224,8 @@ Layer = function (name, width, height){
 
 Layer.prototype = {
     'loadImage': function (uri, preserve){
-        var layer = this, image = new Image();
+        var layer = this,
+            image = $.element('image');
         
         image.onload = function (){
             if (!preserve) {
