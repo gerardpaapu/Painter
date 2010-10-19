@@ -34,17 +34,22 @@ Painter.prototype = {
         this.currentLayer.context.beginPath();
     },
 
-    'moveTo': function (x, y){
-        x = x * this.inverseZoom + this.offset.x;
-        y = y * this.inverseZoom + this.offset.y;
-        this.currentLayer.context.moveTo(x, y);
+    'adjustPoint': function (point){
+        return {
+            x: point.x * this.inverseZoom + this.offset.x,
+            y: point.y * this.inverseZoom + this.offset.y
+        };
     },
 
-    'lineTo': function (x, y){
-        x = x * this.inverseZoom + this.offset.x;
-        y = y * this.inverseZoom + this.offset.y;
+    'moveTo': function (point){
+        point = this.adjustPoint(point);
+        this.currentLayer.context.moveTo(point.x, point.y);
+    },
+
+    'lineTo': function (point){
+        point = this.adjustPoint(point);
         var context = this.currentLayer.context;
-        context.lineTo(x, y);
+        context.lineTo(point.x, point.y);
         context.stroke();
     },
 

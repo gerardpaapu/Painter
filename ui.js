@@ -83,12 +83,12 @@
         start: function (event, point){
             event.preventDefault();
             this.beginPath();
-            this.moveTo(point.x, point.y);
+            this.moveTo(point);
         },
 
         move: function (event, point){
             event.preventDefault();
-            this.lineTo(point.x, point.y);
+            this.lineTo(point);
         }
     });
 }());
