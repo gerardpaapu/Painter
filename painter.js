@@ -177,7 +177,7 @@ LayerCollection.prototype = {
             index, item;
 
         for (index = 0; index < length; index++){
-            item = this.items[i].canvas;
+            item = this.items[index].canvas;
             ctx.drawImage(item, 0, 0, item.width, item.height);
         }
 
