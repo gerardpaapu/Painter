@@ -11,10 +11,13 @@ var $ = (function (){
     $.globals.wrapper = $("#MainWrapper");
 
     $.log = function (obj){
-        var console = $("#Debug");
-        if (console){
+        $.console = window.console;
+        if (!$.console){
+            $.console = $("#Debug");
             var msg = $.element("p", {'html': JSON.stringify(obj)});
             $.inject(msg, console);
+        } else {
+            console.log(obj);
         }
     };
 
