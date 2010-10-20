@@ -66,7 +66,7 @@
     
     var uploadButton = $.element('input', {type: 'button', value: 'upload'});
     uploadButton.addEventListener('click', function (event){
-        painter.upload();
+        ipaint.upload();
     });
 
     $("#Controls").appendChild(layerpicker);
