@@ -63,7 +63,14 @@
             layerpicker
         );
     }
+    
+    var uploadButton = $.element('input', {type: 'button', value: 'upload'});
+    uploadButton.addEventListener('click', function (event){
+        painter.upload();
+    });
+
     $("#Controls").appendChild(layerpicker);
+    $("#Controls").appendChild(uploadButton);
 
     var ui = ipaint.ui = {
         colorPicker: colorPicker,
@@ -74,7 +81,8 @@
         painter: painter.element,
         layers: new UIComponent(layerpicker, function (value){
             painter.setCurrentLayer(parseInt(value, 10));
-        })
+        }),
+        upload: uploadButton
     };
 
     $.gesture({

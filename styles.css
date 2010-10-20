@@ -30,11 +30,23 @@ html, body {
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding: 3px;
+    padding: 0 3px 3px;
     background: rgba(0, 0, 0, 0.4);
     -webkit-transition: bottom 0.5s ease-out;
 }
 
+#ControlsShowHide {
+    display: block;
+    overflow: hidden;
+    float: left;
+    font-size: 12px;
+    padding: 6px;
+    height: 12px;
+    line-height: 12px;
+    margin: -24px 0 0 -3px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 0 0.3em 0 0;
+}
 #ControlsShowHide:link,
 #ControlsShowHide:visited {
     display: block;
@@ -45,7 +57,6 @@ html, body {
 #Controls label {
     color: white;
 }
-
 
 .colorpicker {
     width: 295px;
