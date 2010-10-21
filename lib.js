@@ -170,9 +170,11 @@ var $ = (function (){
         return getPosition(element);
     };
 
-    $.inject = function (child, parentNode){
-        if (parentNode.children.length){
-            parentNode.insertBefore(child, parentNode.children[0]);
+    $.inject = function (child, parentNode, at){
+        at = at || 0;
+        try { parentNode.removeChild(child); } catch (e) {}
+        if (at < parentNode.children.length){
+            parentNode.insertBefore(child, parentNode.children[at]);
         } else {
             parentNode.appendChild(child);
         }
@@ -327,6 +329,59 @@ var $ = (function (){
                 addListener('blur', opt.end);
             }
         }
+    };
+
+    $.addClass = function (element, _class){
+        var classes = element.getAttribute('class').split(' '),
+            exists = classes.indexOf(_class) !== -1;
+
+        if (!exists) {
+            classes.push(_class);
+            element.setAttribute('class', classes.join(' '));
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    $.removeClass = function (element, _class){
+        var classes = element.getAttribute('class').split(' '),
+            index = classes.indexOf(_class);
+
+
+        if (index !== -1) {
+            classes.splice(index, 1);
+            element.setAttribute('class', classes.join(' '));
+            return true;
+        } else {
+            return false; 
+        }
+    };
+
+    $.hasClass = function (element, _class){
+        var classes = element.getAttribute('class').split(' ');
+        return classes.indexOf(_class) !== -1;
+    };
+
+    $.toggleClass = function (element, _class){
+        return $.removeClass(element, _class) || $.addClass(element, _class);
+    };
+
+    $.emptyElement = function (element){
+        var children = element.children, i = children.length;
+        while (i--){
+            element.removeChild(children[i]);
+        }
+    };
+
+    $.mapObject = function (obj, fn, bind){
+        var hasOwn = Object.prototype.hasOwnProperty, out = {}, key;
+        for (key in obj) {
+            if (hasOwn.call(obj, key)) {
+                out[key] = fn.call(bind || obj, obj[key], key, obj); 
+            }
+        }
+        return key;
     };
 
     return $;
