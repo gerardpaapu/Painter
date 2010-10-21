@@ -134,8 +134,12 @@ LayerCollection.prototype = {
     },
 
     'insertLayer': function (layer, where){
-        var index = this.index(where || "top");
-        this.element.insertBefore(layer.canvas, this.element.children[index]);
+        var index = this.index(typeof(where) === "number" ? where : "top");
+        if (index < this.items.length){
+            this.element.insertBefore(layer.canvas, this.element.children[index]);
+        } else {
+            this.element.appendChild(layer.canvas);
+        }
         this.items.splice(index, 0, layer);
     },
 
@@ -242,6 +246,12 @@ Layer.prototype = {
     'clear': function (){
         var canvas = this.canvas;
         this.context.clearRect(0, 0, canvas.width, canvas.height);
+    },
+
+    'visible': true,
+
+    'toggleVisible': function (){
+        this.canvas.style.display = (this.visible = !this.visible) ? 'block' : 'none';
     },
 
     'loadBrush': function (brush){

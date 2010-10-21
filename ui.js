@@ -64,7 +64,8 @@
         opacity: new BrushControl("#Opacity", 'opacity'),
         mode: new BrushControl("#Mode", 'mode'),
         size: new BrushControl("#BrushSize", 'size'),
-        painter: painter.element
+        painter: painter.element,
+        layers: layerUI
     };
 
     $.gesture({

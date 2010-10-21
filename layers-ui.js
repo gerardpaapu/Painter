@@ -1,19 +1,28 @@
-var LayerUI = function (painter){
+var LayerUI, LayerView;
+
+LayerUI = function (painter){
     this.painter = painter;
-    this.layers = painter.layers;
+    this.model = painter.layers;
     this.makeElements();
 };
 LayerUI.prototype = {
     'makeElements': function (){
-        var i = 0, length = this.layers.items.length, layerUI = this;
+        var layers = this.model.items,
+            length = this.model.items.length,
+            layerUI = this,
+            i, layer;
+
+        this.layers = [];
         this.container = $.element('div', {'class': "layerUI"});
         this.layersWrapper = $.element('ul', {'class': "layersWrapper"});
-        this.layerElements = [];
 
-        for (; i < length; i++){
-            this.layerElements[i] = this.elementFrom(this.layers.items[i]);
+        for (i = 0; i < length; i++){
+            layer = this.layers[i] = new LayerView(layers[i], this, this.painter);
+            this.layersWrapper.appendChild(layer.element);
         }
 
+        this.setCurrent(this.layers[0]);
+        this.reorder();
         this.newLayerButton = $.element('a', {
             'class': "newLayer button",
             href: "#new-layer",
@@ -21,105 +30,141 @@ LayerUI.prototype = {
         });
         
         this.newLayerButton.addEventListener('click', function (){
-            var name = window.prompt("new layer", "untitled"),
-                layer = layerUI.layers.createLayer(name),
-                index = layerUI.layers.items.indexOf(layer),
-                element = layerUI.elementFrom(layer),
-                wrapper = layerUI.layersWrapper,
-                children = wrapper.children;
-            
-            wrapper.insertBefore(element, children[i + 1]);
-            layerUI.layerElements = $.array(wrapper.children);
+            var name = window.prompt("new layer", "untitled");
+            layerUI.newLayer(name);
         });
-
-        $.adopt(this.layersWrapper, this.layerElements);
+        
         $.adopt(this.container, [this.newLayerButton, this.layersWrapper]);
     },
+    
+    newLayer: function (name){
+        var model = this.model.createLayer(name),
+            view = new LayerView(model, this, this.painter),
+            wrapper = this.layersWrapper;
 
-    'elementFrom': function (layer){
-        var name = $.element('span', {'class': "layerName", html: layer.name}),
-            moveUp = $.element('a', {'class': "moveUp", html: "&uarr;"}),
-            moveDown = $.element('a', {'class': "moveDown", html: "&darr;"}),
-            deleteButton = $.element('a', {'class': "delete button", html: "x"}),
-            toggleVisible = $.element('a', {'class': "toggleVisible button", html: "hide"}),
-            container = $.element('li', {'class': "layer"}),
-            layersUI = this;
-
-        if (layer.visible){
-            $.addClass(toggleVisible, "visible");
-        }
-
-        $.adopt(container, [name, moveUp, moveDown, deleteButton, toggleVisible]);
-
-        name.addEventListener('click', function (event){
-            layersUI.setCurrent(layer, container);
-        });
-
-        moveUp.addEventListener('click', function (event){
-            layersUI.moveUp(layer, container);
-        });
-
-        moveDown.addEventListener('click', function (event){
-            layersUI.moveDown(layer, container);
-        });
-
-        deleteButton.addEventListener('click', function (event){
-            layersUI.deleteLayer(layer, container);
-        });
-
-        toggleVisible.addEventListener('click', function (event){
-            layersUI.toggleVisible(layer, container);
-        });
-
-        return container;
+        wrapper.appendChild(view.element);
+        this.layers.push(view);
+        this.reorder();
     },
 
-    moveLayer: function (layer, element, where){
-        var container = this.layersWrapper,
-            elements = container.children,
-            index = [].indexOf.call(elements, element);
+    reorder: function (){
+        var layers = this.layers,
+            wrapper = this.layersWrapper,
+            i = layers.length, layer, j;
 
-        if (index === -1){
-            $.log('bad layer: ', layer);
-            return false;
-        }
+        layers.sort(function (a, b){
+            return a.getIndex() > b.getIndex();
+        });
         
-        if (where < length && where >= 0){
-            this.painter.layers.moveLayer(index, where);
-            elements.insertBefore(element, children[where + 1]); 
-            this.layerElements = $.array(elements);
-            return true;
-        } else {
-            $.log('bad index');
-            return false;
-        } 
+        $.emptyElement(wrapper);
+        
+        while (i--){
+            layer = layers[i];
+            if (layer.getIndex() === -1) {
+                layers.splice(layer.getIndex(), 1);
+            } else { 
+                wrapper.appendChild(layer.element);
+            }
+        }
     },
 
-    moveUp: function (layer, element){
-        var index = this.layerElements.indexOf(element);        
-        return this.moveLayer(layer, element, index + 1);
-    },
+    setCurrent: function (item){
+        var layer = item.model,
+            element = item.element;
 
-    moveDown: function (layer, element){
-        var index = this.layerElements.indexOf(element);        
-        return this.moveLayer(layer, element, index - 1);
-    },
-
-    deleteLayer: function (layer, element){
-        this.container.removeChild(element);
-        this.layers.removeLayer(layer);
-    },
-
-    toggleVisible: function (layer, element){
-        layer.toggleVisible();
-        $.toggleClass(element, 'visible');
-    },
-
-    setCurrent: function (layer, element){
         this.painter.setCurrentLayer(layer);
-        $.removeClass(this.current);
-        $.addClass(element);
+        if (this.current){
+            $.removeClass(this.current, 'current');
+        }
+        $.addClass(element, 'current');
         this.current = element;
     }
 };
 
+LayerView = function (model, parentUI, painter){
+    // Performs the UI functions for a single layer
+    this.model = model;       // Layer
+    this.parentUI = parentUI; // LayerUI
+    this.painter = painter;   // Painter
+
+    this.createElements();
+    this.bindEvents();
+}
+LayerView.prototype = {
+    createElements: function (){
+        var buttons = this.buttons = {
+            setCurrent: $.element('span', {
+                'class': "layerName button", 
+                html: this.model.name
+            }),
+
+            moveUp: $.element('a', {
+                'class': "moveUp button",
+                html: "&uarr;"
+            }),
+
+            moveDown: $.element('a', {
+                'class': "moveDown button", 
+                html: "&darr;"
+            }),
+
+            remove: $.element('a', {
+                'class': "remove button",
+                html: "x"
+            }),
+
+            toggleVisible: $.element('a', {
+                'class': "toggleVisible button", 
+                html: "hide"
+            })
+        };
+        this.element = $.element('li', {'class': "layer"});
+        $.adopt(this.element, [
+               buttons.setCurrent, 
+               buttons.moveDown, 
+               buttons.moveUp, 
+               buttons.remove, 
+               buttons.toggleVisible
+        ]);
+    },
+
+    bindEvents: function (){
+        var buttons =  this.buttons, ui = this;
+        $.mapObject(buttons, function(item, name){
+            item.addEventListener('click', function (event){
+                ui[name](item);
+            });
+        });
+    },
+
+    getIndex: function (){
+        return this.painter.layers.items.indexOf(this.model);
+    },
+
+    moveTo: function (where){
+        this.painter.layers.moveLayer(this.model, where);
+        this.parentUI.reorder();
+    },
+
+    moveUp: function (){
+        this.moveTo(this.getIndex() + 1);
+    },
+
+    moveDown: function (){
+        this.moveTo(this.getIndex() - 1);
+    },
+
+    toggleVisible: function (){
+        this.model.toggleVisible();
+        $.toggleClass(this.element, 'hidden');
+    },
+
+    remove: function (){
+        this.painter.layers.removeLayer(this.model);
+        this.parentUI.reorder();
+    },
+
+    setCurrent: function (){
+        this.parentUI.setCurrent(this);
+    }
+};
