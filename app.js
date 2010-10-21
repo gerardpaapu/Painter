@@ -10,10 +10,6 @@ ipaint.painter = (function (){
         painter = new Painter({width: size, height: size}),
         el = painter.element, i;
 
-    for (i = 0; i < 10; i++){
-        painter.layers.createLayer('layer '+i);
-    }
-    
     container.insertBefore(el, container.children[0]);
     return painter;
 }());

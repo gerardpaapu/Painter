@@ -53,24 +53,10 @@
     };
 
     var colorPicker = new ColorPicker();
+    var layerUI = new LayerUI(painter);
 
     $("#Controls").appendChild(colorPicker.container);
-
-    var layerpicker = $.element("select", {id: "Layers"}); 
-    for (var i=0; i < 10; i++){
-        $.inject(
-            $.element("option", {value: ''+i, html: "layer "+i}),
-            layerpicker
-        );
-    }
-    
-    var uploadButton = $.element('input', {type: 'button', value: 'upload'});
-    uploadButton.addEventListener('click', function (event){
-        ipaint.upload();
-    });
-
-    $("#Controls").appendChild(layerpicker);
-    $("#Controls").appendChild(uploadButton);
+    $("#Controls").appendChild(layerUI.container);
 
     var ui = ipaint.ui = {
         colorPicker: colorPicker,
@@ -78,11 +64,7 @@
         opacity: new BrushControl("#Opacity", 'opacity'),
         mode: new BrushControl("#Mode", 'mode'),
         size: new BrushControl("#BrushSize", 'size'),
-        painter: painter.element,
-        layers: new UIComponent(layerpicker, function (value){
-            painter.setCurrentLayer(parseInt(value, 10));
-        }),
-        upload: uploadButton
+        painter: painter.element
     };
 
     $.gesture({
