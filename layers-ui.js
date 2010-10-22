@@ -53,9 +53,8 @@ LayerUI.prototype = {
             i = layers.length, layer, j;
 
         layers.sort(function (a, b){
-            return a.getIndex() > b.getIndex();
+            return a.getIndex() - b.getIndex();
         });
-        
         $.emptyElement(wrapper);
         
         while (i--){
@@ -89,7 +88,7 @@ LayerView = function (model, parentUI, painter){
 
     this.createElements();
     this.bindEvents();
-}
+};
 LayerView.prototype = {
     createElements: function (){
         var buttons = this.buttons = {

@@ -33,3 +33,5 @@ ipaint.upload = function (){
         }
     }
 };
+
+$.log('loaded...');

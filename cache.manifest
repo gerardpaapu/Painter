@@ -1,6 +1,6 @@
 CACHE MANIFEST
-# Fixed the tabs bro
-# fucking cache UNCACHE YOU CUNT
+# Fixed the layer reordering bug
+# Added the debug console to the tab interface
 index.html
 img/background.png
 img/background.png
@@ -11,4 +11,5 @@ colorpicker.js
 layers-ui.js
 lib.js
 painter.js
+tabs.js
 ui.js

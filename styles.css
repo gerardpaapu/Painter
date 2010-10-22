@@ -15,17 +15,6 @@ html, body {
     background: #ccc url(img/background.png) top left repeat;
 }
 
-#Debug {
-    width: 200px;
-    height: 120px;
-    background: rgba(0, 0, 0, 0.4);
-    overflow: auto;
-    position: absolute;
-    top: 0; right: 0;
-    color: white;
-    display: none;
-}
-
 #ControlsWrapper {
     position: absolute;
     top: 100%; left: 0;
