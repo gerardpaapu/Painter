@@ -54,9 +54,15 @@
 
     var colorPicker = new ColorPicker();
     var layerUI = new LayerUI(painter);
+    $.emptyElement($("#ColorsTab"));
+    $.emptyElement($("#LayersTab"));
+    $("#ColorsTab").appendChild(colorPicker.container);
+    $("#LayersTab").appendChild(layerUI.container);
 
-    $("#Controls").appendChild(colorPicker.container);
-    $("#Controls").appendChild(layerUI.container);
+    var uploadButton = $('#UploadDocument');
+    uploadButton.addEventListener('click', function (event){
+        ipaint.upload();
+    });
 
     var ui = ipaint.ui = {
         colorPicker: colorPicker,
@@ -65,7 +71,8 @@
         mode: new BrushControl("#Mode", 'mode'),
         size: new BrushControl("#BrushSize", 'size'),
         painter: painter.element,
-        layers: layerUI
+        layers: layerUI,
+        upload: uploadButton
     };
 
     $.gesture({
@@ -80,55 +87,6 @@
         move: function (event, point){
             event.preventDefault();
             this.lineTo(point);
-        }
-    });
-}());
-(function (){
-    // Show and hide the controls
-    var wrapper = $('#ControlsWrapper'),
-        controls = $('#Controls'),
-        showHide = $('#ControlsShowHide'),
-        controlsVisible = true;
-
-    function toggleControls(event){
-        event.preventDefault();
-        if (controlsVisible){
-            hideControls();
-        } else {
-            showControls();
-        }
-    }
-
-    function showControls(){
-        wrapper.style.bottom = 0;
-        showHide.innerHTML = "Hide Tools";
-        controlsVisible = true;
-    }
-
-    function hideControls(){
-        var height = controls.clientHeight;
-        wrapper.style.bottom = (-height) + 'px';
-        showHide.innerHTML = "Show Tools";
-        controlsVisible = false;
-    }
-
-    hideControls();
-
-    showHide.addEventListener('click', toggleControls);
-
-
-    window.addEventListener('orientationchange', function (event){
-        var orientation = getOrientation();
-        if (orientation.portrait){
-            $("#ColorPicker").style.display = "block";
-        } else {
-            $("#ColorPicker").style.display = "none";
-        }
-
-        if (controlsVisible){
-            showControls();
-        } else {
-            hideControls();
         }
     });
 }());

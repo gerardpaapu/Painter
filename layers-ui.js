@@ -95,27 +95,27 @@ LayerView.prototype = {
         var buttons = this.buttons = {
             setCurrent: $.element('span', {
                 'class': "layerName button", 
-                html: this.model.name
+                html: this.model.name, href: "#"
             }),
 
             moveUp: $.element('a', {
                 'class': "moveUp button",
-                html: "&uarr;"
+                html: "&uarr;", href: "#"
             }),
 
             moveDown: $.element('a', {
                 'class': "moveDown button", 
-                html: "&darr;"
+                html: "&darr;", href: "#"
             }),
 
             remove: $.element('a', {
                 'class': "remove button",
-                html: "x"
+                html: "x", href: "#"
             }),
 
             toggleVisible: $.element('a', {
                 'class': "toggleVisible button", 
-                html: "hide"
+                html: "hide", href: "#"
             })
         };
         this.element = $.element('li', {'class': "layer"});
@@ -132,6 +132,7 @@ LayerView.prototype = {
         var buttons =  this.buttons, ui = this;
         $.mapObject(buttons, function(item, name){
             item.addEventListener('click', function (event){
+                event.preventDefault();
                 ui[name](item);
             });
         });

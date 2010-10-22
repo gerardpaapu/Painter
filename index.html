@@ -1,63 +1,83 @@
 <!DOCTYPE HTML>
-<html lang="en" manifest="cache.manifest">
+<html lang="en" manifest="/cache.manifest">
     <head>
         <meta charset="UTF-8">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <title>Painter</title>
-        <link rel="stylesheet" href="styles.css" />
-        <link rel="stylesheet" href="painter.css" />
+        <link rel="stylesheet" href="/styles.css" />
+        <link rel="stylesheet" href="/painter.css" />
     </head>
     <body>
         <div id="MainWrapper">
             <div id="ControlsWrapper">
-                <a href="#show/hide" id="ControlsShowHide">show</a>
-                <div id="Controls">
-                    <div id="BrushOptions">
-                        <table cellpadding="0" cellspacing="0">
-                            <tr>
-                                <td><label for="BrushSize">Size: </label></td>
-                                <td>
-                                    <select id="BrushSize" name="BrushSize">
-                                        <option value="2">2px</option>
-                                        <option value="6">6px</option>
-                                        <option value="10">10px</option>
-                                        <option value="20" selected>20px</option>
-                                        <option value="40">40px</option>
-                                        <option value="80">80px</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><label for="Opacity">Opacity: </label></td>
-                                <td>
-                                    <select name="Opacity" id="Opacity">
-                                        <option value="0.01">lighter</option>
-                                        <option value="0.02">light</option>
-                                        <option value="0.05">medium</option>
-                                        <option value="0.08">dark</option>
-                                        <option value="0.2" selected>darker</option>
-                                        <option value="1">100%</option>
-                                    </select>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td><label for="Mode">Mode: </label></td>
-                                <td>
-                                    <select id="Mode" name="Mode">
-                                        <option value="paint" selected>paint</option>
-                                        <option value="erase">erase</option>
-                                        <option value="behind">behind</option>
-                                        <option value="inside">inside</option>
-                                        <option value="lighten">lighten</option>
-                                        <option value="darken">darken</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                <div id="Controls" class="tabset">
+                    <ul class="tabs">
+                        <li class="tab active"><a href="#ToolsTab">Tools</a></li>
+                        <li class="tab"><a href="#LayersTab">Layers</a></li>
+                        <li class="tab"><a href="#ColorsTab">Colors</a></li>
+                        <li class="tab"><a href="#HideTabs">Hide</a></li>
+                    </ul>
+                    <ul class="sections">
+                        <li id="ToolsTab" class="section active">
+                            <div id="BrushOptions">
+                                <h3>Brush</h3>
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td><label for="BrushSize">Size</label></td>
+                                        <td>
+                                            <select id="BrushSize" name="BrushSize">
+                                                <option value="2">2px</option>
+                                                <option value="6">6px</option>
+                                                <option value="10">10px</option>
+                                                <option value="20" selected>20px</option>
+                                                <option value="40">40px</option>
+                                                <option value="80">80px</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="Opacity">Opacity</label></td>
+                                        <td>
+                                            <select name="Opacity" id="Opacity">
+                                                <option value="0.01">lighter</option>
+                                                <option value="0.02">light</option>
+                                                <option value="0.05">medium</option>
+                                                <option value="0.08">dark</option>
+                                                <option value="0.2" selected>darker</option>
+                                                <option value="1">100%</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="Mode">Mode</label></td>
+                                        <td>
+                                            <select id="Mode" name="Mode">
+                                                <option value="paint" selected>paint</option>
+                                                <option value="erase">erase</option>
+                                                <option value="behind">behind</option>
+                                                <option value="inside">inside</option>
+                                                <option value="lighten">lighten</option>
+                                                <option value="darken">darken</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="FileControls">
+                                <h3>Files</h3>
+                                <input type="button" id="SaveDocument" value="save" disabled>
+                                <input type="button" id="DeleteDocument" value="delete" disabled>
+                                <select id="LoadDocument" disabled>
+                                    <option>Load...</option>
+                                </select>
+                                <input type="button" id="UploadDocument" value="upload">
+                            </div>
+                        </li>
+                        <li id="LayersTab" class="section"><p>loading...</p></li>
+                        <li id="ColorsTab" class="tab"><p>loading...</p></li>
+                    </ul>
                 </div>
             </div>
 
@@ -65,11 +85,12 @@
                 <h3>Debug</h3>
             </div>
         </div>
-        <script type="text/javascript" src="lib.js"></script>
-        <script type="text/javascript" src="colorpicker.js"></script>
-        <script type="text/javascript" src="layers-ui.js"></script>
-        <script type="text/javascript" src="painter.js"></script>
-        <script type="text/javascript" src="app.js"></script>
-        <script type="text/javascript" src="ui.js"></script>
+        <script type="text/javascript" src="/lib.js"></script>
+        <script type="text/javascript" src="/colorpicker.js"></script>
+        <script type="text/javascript" src="/layers-ui.js"></script>
+        <script type="text/javascript" src="/painter.js"></script>
+        <script type="text/javascript" src="/app.js"></script>
+        <script type="text/javascript" src="/tabs.js"></script>
+        <script type="text/javascript" src="/ui.js"></script>
     </body>
 </html>
