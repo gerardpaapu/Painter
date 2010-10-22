@@ -72,6 +72,7 @@
     window.addEventListener('orientationchange', resizeControls);
     tabLinks.forEach(function (node){
         node.addEventListener('click', function (event){
+            event.preventDefault();
             setActiveTab(this.getAttribute('href'));       
         }); 
     });
