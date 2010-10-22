@@ -181,8 +181,10 @@ LayerCollection.prototype = {
             index, item;
 
         for (index = 0; index < length; index++){
-            item = this.items[index].canvas;
-            ctx.drawImage(item, 0, 0, item.width, item.height);
+            if (items[index].visible) {
+                item = this.items[index].canvas;
+                ctx.drawImage(item, 0, 0, item.width, item.height);
+            }
         }
 
         return canvas.toDataURL();
