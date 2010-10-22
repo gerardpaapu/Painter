@@ -1,4 +1,5 @@
 CACHE MANIFEST
+# Fixed the transition 
 # Fixed exporting to account for visibility
 # Fixed the layer reordering bug
 # Added the debug console to the tab interface
