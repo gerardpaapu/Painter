@@ -23,18 +23,58 @@ LayerUI.prototype = {
 
         this.setCurrent(this.layers[0]);
         this.reorder();
-        this.newLayerButton = $.element('a', {
-            'class': "newLayer button",
-            href: "#new-layer",
-            html: "New Layer"
-        });
+       
+        this.controls = $.element("div", {'class': "controls"}); 
+
+        var buttons = this.buttons = {
+            newLayer: $.element('input', {
+                'class': "newLayer",
+                type: "button",
+                value: "New Layer"
+            }),
+
+            moveUp: $.element('input', {
+                'class': "moveUp",
+                value: "\u2b06", type: "button"
+            }),
+
+            moveDown: $.element('input', {
+                'class': "moveDown", 
+                value: "\u2b07", type: "button"
+            }),
+
+            remove: $.element('input', {
+                'class': "remove",
+                value: "\u267b", type: "button"
+            }),
+
+            toggleVisible: $.element('input', {
+                'class': "toggleVisible", 
+                value: "hide", type: "button"
+            })
+        };
         
-        this.newLayerButton.addEventListener('click', function (){
+        buttons.newLayer.addEventListener('click', function (event){
             var name = window.prompt("new layer", "untitled");
-            layerUI.newLayer(name);
+            if (name.length) {
+                layerUI.newLayer(name);
+            }
         });
-        
-        $.adopt(this.container, [this.newLayerButton, this.layersWrapper]);
+
+        layerUI.controls.appendChild(buttons.newLayer);
+
+        ['remove', 'toggleVisible', 'moveUp', 'moveDown'].forEach(function (name){
+            var button = layerUI.buttons[name];
+            button.addEventListener('click', function (event){
+                if (layerUI.current){
+                    layerUI.current[name]();
+                }
+            });
+
+            layerUI.controls.appendChild(button);
+        });
+
+        $.adopt(this.container, [this.controls, this.layersWrapper]);
     },
     
     newLayer: function (name){
@@ -73,10 +113,10 @@ LayerUI.prototype = {
 
         this.painter.setCurrentLayer(layer);
         if (this.current){
-            $.removeClass(this.current, 'current');
+            $.removeClass(this.current.element, 'current');
         }
         $.addClass(element, 'current');
-        this.current = element;
+        this.current = item;
     }
 };
 
@@ -87,53 +127,13 @@ LayerView = function (model, parentUI, painter){
     this.painter = painter;   // Painter
 
     this.createElements();
-    this.bindEvents();
 };
 LayerView.prototype = {
     createElements: function (){
-        var buttons = this.buttons = {
-            setCurrent: $.element('span', {
-                'class': "layerName button", 
-                html: this.model.name, href: "#"
-            }),
-
-            moveUp: $.element('a', {
-                'class': "moveUp button",
-                html: "&uarr;", href: "#"
-            }),
-
-            moveDown: $.element('a', {
-                'class': "moveDown button", 
-                html: "&darr;", href: "#"
-            }),
-
-            remove: $.element('a', {
-                'class': "remove button",
-                html: "x", href: "#"
-            }),
-
-            toggleVisible: $.element('a', {
-                'class': "toggleVisible button", 
-                html: "hide", href: "#"
-            })
-        };
-        this.element = $.element('li', {'class': "layer"});
-        $.adopt(this.element, [
-               buttons.setCurrent, 
-               buttons.moveDown, 
-               buttons.moveUp, 
-               buttons.remove, 
-               buttons.toggleVisible
-        ]);
-    },
-
-    bindEvents: function (){
-        var buttons =  this.buttons, ui = this;
-        $.mapObject(buttons, function(item, name){
-            item.addEventListener('click', function (event){
-                event.preventDefault();
-                ui[name](item);
-            });
+        var layer = this;
+        this.element = $.element('li', {'class': "layer", html: this.model.name});
+        this.element.addEventListener('click', function (){
+            layer.setCurrent(); 
         });
     },
 

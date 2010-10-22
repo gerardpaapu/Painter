@@ -1,0 +1,237 @@
+html, body {
+    padding: 0; margin: 0;
+    font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.clearfix {
+    &:after {
+        content: ".";
+        clear: both;
+        visibility: hidden;
+        display: block;
+        margin: 0; padding: 0; height: 0;
+        overflow: hidden;
+    }
+}
+h3 {
+    font-size: 1.1em;
+    margin: 0.3em 0;
+}
+
+#MainWrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding: 0; margin: 0;
+    overflow: hidden;
+    background: black;
+}
+
+.layerContainer {
+    background: #ccc url(img/background.png) top left repeat;
+}
+
+#ControlsWrapper {
+    position: absolute;
+    top: 100%; left: 0;
+    width: 100%;
+    height: 90%;
+    padding: 0;
+    background: #eee;
+    -webkit-transition: top 0.5s ease-out;
+}
+
+#Controls {
+    border-top: solid 1px #555;
+}
+
+ul.tabs {
+    border-radius: 0 0.3em 0 0;
+    display: block;
+    float: left;
+    line-height: 12px;
+    font-size: 14px;
+    list-style: none;
+    margin: -26px 0 0; padding: 0;
+}
+
+ul.tabs > li {
+    background: -webkit-gradient(linear, left top, left bottom, from(#ccc), to(#999));
+    display: block;
+    float: left;
+    margin: 0 3px;
+    padding: 0;
+    border: solid 1px #555;
+    border-radius: 5px 5px 0 0;
+    background-clip: padding-box;
+}
+
+ul.tabs > li.active {
+    background: #eee;
+    border-bottom: solid 1px transparent;
+}
+
+ul.tabs a:link,
+ul.tabs a:visited {
+    display: block;
+    color: black;
+    text-decoration: none;
+    padding: 6px 8px;
+}
+
+ul.sections {
+    clear: both;
+    list-style: none;
+    margin: 0; padding: 0;
+    display: block;
+}
+
+ul.sections > li {
+    padding: 10px 12px;
+    display: none;
+}
+
+ul.sections > li.active {
+    display: block;
+}
+
+.colorpicker {
+    width: 295px;
+    padding: 0;
+    margin: 0 auto;
+    float: left;
+}
+
+.colorpicker .canvasWrapper {
+    margin: 4px;
+    border: solid 1px white;
+}
+
+.colorpicker canvas {
+    float: left;
+}
+
+.colorpicker canvas:first-child {
+    border-right: solid 1px white;
+}
+
+.colorpicker input[type=color] { clear: left; }
+
+.colorpicker input[type=color],
+.colorpicker .sample,
+.colorpicker input[type=button] {
+    display: block;
+    float: left;
+    height: 20px; 
+    width: 88px;
+    margin: 4px;
+    padding: 0;
+}
+
+.colorpicker .sample { 
+    background: pink;
+    text-align: center;
+}
+
+.colorpicker ul.palette {
+    display: block;
+    clear: both;
+    list-style: none;
+    padding: 0; margin: 0;
+}
+
+.colorpicker ul.palette li {
+    display: block;
+    width: 49px;
+    height: 30px;
+    background: pink;
+    border: solid 1px white;
+    margin: 4px;
+    float: left;
+    text-indent: -999px;
+    overflow: hidden;
+}
+
+#Controls:after, 
+ul.sections > li:after, 
+.colorpicker:after, 
+.colorpicker .canvasWrapper:after,
+.colorpicker ul.palette:after {
+    content: ".";
+    clear: both;
+    visibility: hidden;
+    display: block;
+    margin: 0; padding: 0; height: 0;
+    overflow: hidden;
+}
+
+.button {
+    -webkit-border-radius: 3px;
+    border: none;
+    text-shadow: rgba(0, 0, 0, 0.4) 0px 0px 3px;
+    background: #ccc;
+    padding: 0.3em;
+    margin: 0 0.2em;
+}
+
+.button:link, .button:visited {
+    color: #333;
+    text-decoration: none;
+}
+
+.button:hover, .button:active {
+    
+}
+
+.layerUI {
+    .controls {
+        .clearfix;
+
+        input { 
+            float: right; 
+            margin-left: 5px;
+        }
+
+        input.newLayer {
+            float: left;
+        }
+    }
+    .layersWrapper {
+        padding: 0; margin: 5px 0;
+        border: solid 1px #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+        clear: both;
+        background: white;
+    }
+
+    .layer {
+        list-style: none;
+        margin: 0;
+        padding: 5px 10px;
+
+        &.hidden { color: #999; }
+
+        &:after {
+            clear: both;
+            content: ".";
+            display: block;
+            height: 0;
+            overflow: hidden;    
+            visibility: hidden;
+        }
+
+        input, .layerName {
+            height: 18px;
+            margin: 2px 0;
+        }
+
+        &.current {
+            font-weight: bold;
+        }
+    }
+
+    .layer ~ .layer {
+        border-top: solid 1px #ccc;
+    }
+}

@@ -23,8 +23,7 @@
     }
 
     function hideControls(){
-        var height = controls.clientHeight;
-        wrapper.style.top = height + '100%';
+        wrapper.style.top = '100%';
         controlsVisible = false;
     }
 

@@ -35,3 +35,5 @@ ipaint.upload = function (){
 };
 
 $.log('loaded...');
+var container = $("#MainWrapper");
+$.log(container.clientWidth+ 'x' + container.clientHeight);
