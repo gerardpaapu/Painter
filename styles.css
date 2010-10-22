@@ -22,7 +22,7 @@ html, body {
     height: 90%;
     padding: 0;
     background: #ddd;
-    -webkit-transition: bottom 0.5s ease-out;
+    -webkit-transition: top 0.5s ease-out;
 }
 #Controls {
     border-top: solid 1px black;
