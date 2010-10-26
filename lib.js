@@ -167,7 +167,9 @@ var $ = (function (){
 
     $.inject = function (child, parentNode, at){
         at = at || 0;
-        try { parentNode.removeChild(child); } catch (e) {}
+        if ($.array(parentNode.children).indexOf(child) !== -1){
+            parentNode.removeChild(child);
+        } 
         if (at < parentNode.children.length){
             parentNode.insertBefore(child, parentNode.children[at]);
         } else {

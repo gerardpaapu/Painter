@@ -156,6 +156,9 @@ LayerCollection.prototype = {
     },
 
     'moveLayer': function (layer, where){
+        if (typeof where !== "number" || where < 0){
+            throw Error("Bad index :" + where);
+        }
         this.insertLayer(this.removeLayer(layer), where);
     },
 
@@ -267,7 +270,7 @@ Layer.prototype = {
     'toJSON': function (){
         return JSON.stringify({
             name: this.name,
-            data: this.context.getDataURI()
+            data: this.canvas.toDataURL()
         });
     }
 };

@@ -23,17 +23,13 @@ ipaint.upload = function (){
     if (data) {
         try {
             $.sendPost({
-                'url': "/upload",
-                'data': {'data': data},
-                'onSuccess': $.alert("uploaded to {responseText}"),
-                'onFail':  $.alert("upload failed: {responseText}")
+                url: "/upload",
+                data: {'data': data},
+                onSuccess: $.alert("uploaded to {responseText}"),
+                onFail:  $.alert("upload failed: {responseText}")
             });
         } catch (err) {
             $.log(err);
         }
     }
 };
-
-$.log('loaded...');
-var container = $("#MainWrapper");
-$.log(container.clientWidth+ 'x' + container.clientHeight);

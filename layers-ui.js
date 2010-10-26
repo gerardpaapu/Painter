@@ -35,12 +35,12 @@ LayerUI.prototype = {
 
             moveUp: $.element('input', {
                 'class': "moveUp",
-                value: "\u2b06", type: "button"
+                value: "\u2191", type: "button"
             }),
 
             moveDown: $.element('input', {
                 'class': "moveDown", 
-                value: "\u2b07", type: "button"
+                value: "\u2193", type: "button"
             }),
 
             remove: $.element('input', {
@@ -147,11 +147,19 @@ LayerView.prototype = {
     },
 
     moveUp: function (){
-        this.moveTo(this.getIndex() + 1);
+        if (this.getIndex !== -1){
+            this.moveTo(this.getIndex() + 1);
+        } else {
+            throw Error("Couldn't find this layer in model");
+        }
     },
 
     moveDown: function (){
-        this.moveTo(this.getIndex() - 1);
+        if (this.getIndex !== -1){
+            this.moveTo(this.getIndex() - 1);
+        } else {
+            throw Error("Couldn't find this layer in model");
+        }
     },
 
     toggleVisible: function (){
