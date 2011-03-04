@@ -24,8 +24,7 @@ Color.prototype = {
 
     'toHex': function (){
         function pad(str, padding, length){
-            var i = length - str.length;
-            while (i--){
+            while (str.length < length) {
                 str = padding + str;
             }
             return str;
