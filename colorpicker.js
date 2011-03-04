@@ -1,10 +1,12 @@
+/*globals $: false */
+/*jshint browser: true*/
 var Color, ColorPicker;
 Color = function (x, y, z, maximum){
     var min = Math.min;
     maximum = maximum || 1;
 
     if (!(this instanceof Color)) {
-        return new Color(x, y, z, max);
+        return new Color(x, y, z, maximum);
     } else {
         this.x = min(x, maximum) / maximum;
         this.y = min(y, maximum) / maximum;
@@ -16,9 +18,9 @@ Color.cache = {};
 Color.prototype = {
     'toRGB': function (){
         return (
-            "rgb(" + ~~(this.x * 255) +
-             ", "  + ~~(this.y * 255) +
-             ", "  + ~~(this.z * 255) + ")"
+            "rgb(" + Math.floor(this.x * 255) +
+             ", "  + Math.floor(this.y * 255) +
+             ", "  + Math.floor(this.z * 255) + ")"
         );
     },
 
@@ -31,7 +33,7 @@ Color.prototype = {
         }
 
         function hexComponent(n){ 
-            n = ~~(255 * n);
+            n = Math.floor(255 * n);
             return pad(n.toString(16), '0', 2).toUpperCase();
         }
 
@@ -104,9 +106,9 @@ ColorPicker.prototype = {
             return $.element("li", {'class': "swatch"});
         });
 
-        var list = $.element('ul', {'class': "palette"});
-        var controls = $.element('div', {'class': "controls"});
-        var canvasWrapper = $.element('div', {'class': "canvasWrapper"});
+        var list = $.element('ul', {'class': "palette"}),
+            controls = $.element('div', {'class': "controls"}),
+            canvasWrapper = $.element('div', {'class': "canvasWrapper"});
 
         $.adopt(list, this.paletteSwatches);
         $.adopt(controls, [this.input, this.sample, this.saveButton]);
