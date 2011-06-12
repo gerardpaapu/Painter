@@ -1,3 +1,4 @@
+/*globals ipaint: false, $: false */
 (function (){
     var g = $.globals, painter = ipaint.painter;
 
@@ -87,6 +88,10 @@
         move: function (event, point){
             event.preventDefault();
             this.lineTo(point);
+        },
+
+        end: function (event, point) {
+            this.control_point = false;
         }
     });
 }());

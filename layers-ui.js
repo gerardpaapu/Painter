@@ -10,7 +10,7 @@ LayerUI.prototype = {
         var layers = this.model.items,
             length = this.model.items.length,
             layerUI = this,
-            i, layer;
+            i, layer, buttons;
 
         this.layers = [];
         this.container = $.element('div', {'class': "layerUI"});
@@ -26,7 +26,7 @@ LayerUI.prototype = {
        
         this.controls = $.element("div", {'class': "controls"}); 
 
-        var buttons = this.buttons = {
+        buttons = this.buttons = {
             newLayer: $.element('input', {
                 'class': "newLayer",
                 type: "button",
@@ -95,6 +95,7 @@ LayerUI.prototype = {
         layers.sort(function (a, b){
             return a.getIndex() - b.getIndex();
         });
+
         $.emptyElement(wrapper);
         
         while (i--){
@@ -112,10 +113,13 @@ LayerUI.prototype = {
             element = item.element;
 
         this.painter.setCurrentLayer(layer);
+
         if (this.current){
             $.removeClass(this.current.element, 'current');
         }
+
         $.addClass(element, 'current');
+        
         this.current = item;
     }
 };

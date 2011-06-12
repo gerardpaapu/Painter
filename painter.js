@@ -49,8 +49,14 @@ Painter.prototype = {
     'lineTo': function (point){
         point = this.adjustPoint(point);
         var context = this.currentLayer.context;
-        context.lineTo(point.x, point.y);
-        context.stroke();
+
+        if (this.control_point) {
+            context.quadraticCurveTo(this.control_point.x, this.control_point.y, point.x, point.y);
+            context.stroke();
+            this.control_point = false;
+        } else {
+            this.control_point = point;
+        }
     },
 
     'setCurrentLayer': function (index){
