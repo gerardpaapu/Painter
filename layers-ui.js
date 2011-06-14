@@ -84,27 +84,34 @@ LayerUI.prototype = {
 
         wrapper.appendChild(view.element);
         this.layers.push(view);
+        this.setCurrent(view);
         this.reorder();
     },
 
     reorder: function (){
-        var layers = this.layers,
+        var layers = this.model.items,
             wrapper = this.layersWrapper,
-            i = layers.length, layer, j;
-
-        layers.sort(function (a, b){
-            return a.getIndex() - b.getIndex();
-        });
+            parent = this,
+            layer, i;
 
         $.emptyElement(wrapper);
         
-        while (i--){
-            layer = layers[i];
-            if (layer.getIndex() === -1) {
-                layers.splice(layer.getIndex(), 1);
-            } else { 
-                wrapper.appendChild(layer.element);
+        this.layers = layers.map(function (model) {
+            return new LayerView(model, parent, parent.painter);
+        });
+
+        this.layers.sort(function (a, b){
+            return a.getIndex() - b.getIndex();
+        });
+
+        i = this.layers.length;
+
+        while (i--) {
+            layer = this.layers[i];
+            if (this.painter.currentLayer === layer.model) {
+                $.addClass(layer.element, 'current');
             }
+            wrapper.appendChild(layer.element);
         }
     },
 
@@ -151,18 +158,25 @@ LayerView.prototype = {
     },
 
     moveUp: function (){
-        if (this.getIndex !== -1){
+        var index = this.getIndex();
+
+        if (index == -1){
+            throw new Error("Couldn't find this layer in model");
+        }
+
+        if (index < this.painter.layers.items.length - 1) { 
             this.moveTo(this.getIndex() + 1);
-        } else {
-            throw Error("Couldn't find this layer in model");
         }
     },
 
     moveDown: function (){
-        if (this.getIndex !== -1){
+        var index = this.getIndex();
+        if (index == -1){
+            throw new Error("Couldn't find this layer in model");
+        }
+
+        if (index > 0) { 
             this.moveTo(this.getIndex() - 1);
-        } else {
-            throw Error("Couldn't find this layer in model");
         }
     },
 
@@ -173,6 +187,10 @@ LayerView.prototype = {
 
     remove: function (){
         this.painter.layers.removeLayer(this.model);
+        if (this.painter.currentLayer === this.layer) {
+            this.parent.setCurrent(this.parent.layers[0]);
+        }
+
         this.parentUI.reorder();
     },
 

@@ -150,9 +150,13 @@ LayerCollection.prototype = {
     },
 
     'removeLayer': function (layer){
+        if (this.items.count < 2) {
+            throw new Error();
+        }
+
         layer = this.get(layer);
             
-        if (layer){
+        if (layer) {
             var index = this.items.indexOf(layer);
             this.items.splice(index, 1);
             this.element.removeChild(layer.canvas);
@@ -163,7 +167,7 @@ LayerCollection.prototype = {
 
     'moveLayer': function (layer, where){
         if (typeof where !== "number" || where < 0){
-            throw Error("Bad index :" + where);
+            throw new Error("Bad index :" + where);
         }
         this.insertLayer(this.removeLayer(layer), where);
     },
@@ -189,8 +193,8 @@ LayerCollection.prototype = {
             length = this.items.length,
             index, item;
 
-        for (index = 0; index < length; index++){
-            if (items[index].visible) {
+        for (index = 0; index < length; index++) {
+            if (this.items[index].visible) {
                 item = this.items[index].canvas;
                 ctx.drawImage(item, 0, 0, item.width, item.height);
             }
@@ -211,10 +215,10 @@ LayerCollection.prototype = {
 };
 
 LayerCollection.fromJSON = function (str){
-    var data = JSON.parse(str), layer,
+    var data = JSON.parse(str), layer, name,
         layers = new LayerCollection(data.width, data.height);
 
-    for (var name in data) {
+    for (name in data) {
         if (data.hasOwnProperty(name)) {
             layers.createLayer(name).loadImage(data[name]);
         }
